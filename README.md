@@ -1,4 +1,4 @@
-# AI-Powered Job Application Assistant (Frontend)
+# AI-Powered Job Application Assistant 
 
 Frontend Engineer assignment implementation using **React + Next.js (App Router) + TypeScript**.
 Styling uses **Tailwind CSS + global CSS**.
