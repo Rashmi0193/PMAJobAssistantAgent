@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Job Assistant</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="top">
+        <div class="brand">
+          <div class="dot" aria-hidden="true"></div>
+          <div>
+            <div class="title">Job Assistant</div>
+            <div class="sub">Copilot (extension demo)</div>
+          </div>
+        </div>
+        <button id="openPanel" class="btn primary">Open Copilot</button>
+      </div>
+
+      <div class="card">
+        <div class="row">
+          <div class="h">Profile (stored locally)</div>
+          <div id="status" class="pill">Not saved</div>
+        </div>
+        <div class="grid">
+          <label class="field">
+            <span>Name</span>
+            <input id="name" placeholder="Your name" />
+          </label>
+          <label class="field">
+            <span>Email</span>
+            <input id="email" placeholder="you@email.com" />
+          </label>
+          <label class="field">
+            <span>Phone</span>
+            <input id="phone" placeholder="+1 555 555 5555" />
+          </label>
+          <label class="field">
+            <span>LinkedIn</span>
+            <input id="linkedin" placeholder="https://linkedin.com/in/…" />
+          </label>
+          <label class="field">
+            <span>GitHub</span>
+            <input id="github" placeholder="https://github.com/…" />
+          </label>
+          <label class="field">
+            <span>Website</span>
+            <input id="website" placeholder="https://…" />
+          </label>
+        </div>
+        <div class="actions">
+          <button id="save" class="btn">Save profile</button>
+          <button id="reset" class="btn ghost">Reset</button>
+        </div>
+      </div>
+
+      <div class="help">
+        Tip: Open a job application form, then click <b>Open Copilot</b> to preview and approve autofill.
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
+

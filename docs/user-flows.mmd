@@ -1,0 +1,23 @@
+```mermaid
+flowchart TD
+  A["Landing"] --> B["Onboarding / Profile"]
+  B --> C["Assistant (Job Page Mode)"]
+
+  subgraph Onboarding
+    B1["Enter work history & skills"] --> B2["Add links (LinkedIn/GitHub/Portfolio)"]
+    B2 --> B3["Set preferences (tone, seniority, locations)"]
+    B3 --> B4["Save profile"]
+  end
+
+  subgraph Assistant
+    C --> D["Select agent action"]
+    D --> E["Autofill Agent"]
+    D --> F["Resume Score Agent"]
+    D --> G["Tailored Answer Agent"]
+
+    E --> E1["Preview fields to fill"] --> E2["Approve"] --> E3["Mark done"]
+    F --> F1["Upload/paste resume"] --> F2["Score + tips"] --> F3["Apply suggested edits (optional)"]
+    G --> G1["Pick question (\"Why this role?\")"] --> G2["Generate draft"] --> G3["Edit/Copy"] --> G4["Feedback 👍/👎"]
+  end
+```
+
