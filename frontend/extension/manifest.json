@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "AI Job Assistant Copilot (Demo)",
+  "version": "0.1.0",
+  "description": "Frontend-only demo: store profile, preview/approve autofill, capture job context, and show mock scoring/answers.",
+  "permissions": ["storage", "activeTab", "scripting", "sidePanel", "tabs"],
+  "host_permissions": ["http://*/*", "https://*/*"],
+  "action": {
+    "default_title": "Job Assistant",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["contentScript.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
+
