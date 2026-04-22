@@ -122,7 +122,7 @@ type Action =
   | { type: "applications/patch"; id: string; patch: Partial<Application> }
   | { type: "toast/set"; message?: string };
 
-const DEFAULT_PROFILE: Profile = {
+export const DEFAULT_PROFILE: Profile = {
   name: "",
   email: "",
   targetRole: "Frontend Engineer",
@@ -226,6 +226,7 @@ function reducer(state: AppState, action: Action): AppState {
 
 type AppActions = {
   patchProfile: (patch: Partial<Profile>) => void;
+  resetProfile: () => void;
   setJob: (job: AppState["job"]) => void;
   scrapeJobFromUrl: (url: string) => Promise<void>;
   saveProfile: () => Promise<void>;
@@ -274,6 +275,11 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
   const actions: AppActions = useMemo(
     () => ({
       patchProfile: (patch) => dispatch({ type: "profile/patch", patch }),
+      resetProfile: () => {
+        dispatch({ type: "profile/patch", patch: DEFAULT_PROFILE });
+        dispatch({ type: "toast/set", message: "Profile reset to defaults (local only)." });
+        window.setTimeout(() => dispatch({ type: "toast/set", message: undefined }), 1200);
+      },
       setJob: (job) => {
         dispatch({ type: "job/set", job });
         dispatch({ type: "toast/set", message: "Job context saved." });

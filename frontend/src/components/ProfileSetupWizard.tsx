@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { useAppState } from "@/context/AppStateContext";
+import { DEFAULT_PROFILE, useAppState } from "@/context/AppStateContext";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Divider } from "@/components/ui/Divider";
@@ -72,6 +72,9 @@ const SKILL_PRESETS = [
   "SQL"
 ];
 
+const DEFAULT_SUMMARY =
+  "I build clean, accessible UI and ship features end-to-end with React/TypeScript.";
+
 function chipStyle(active: boolean) {
   return {
     padding: "8px 10px",
@@ -110,9 +113,7 @@ export function ProfileSetupWizard() {
   const [skillsAvoid, setSkillsAvoid] = useState<string[]>(state.profile.skillsAvoid);
   const [skillsAvoidSearch, setSkillsAvoidSearch] = useState("");
 
-  const [summary, setSummary] = useState(
-    "I build clean, accessible UI and ship features end-to-end with React/TypeScript."
-  );
+  const [summary, setSummary] = useState(DEFAULT_SUMMARY);
 
   const canContinueStep1 = useMemo(() => targetRole.trim().length > 1, [targetRole]);
 
@@ -197,6 +198,50 @@ export function ProfileSetupWizard() {
     actions.notify("Profile setup saved locally.");
   }
 
+  function resetPreferences() {
+    const ok = window.confirm(
+      "Reset your preferences to the defaults? This will overwrite the preferences saved on this device."
+    );
+    if (!ok) return;
+
+    setStep(1);
+
+    setTargetRole(DEFAULT_PROFILE.targetRole);
+    setWorkMode(DEFAULT_PROFILE.workMode);
+    setDesiredJobTypes([...DEFAULT_PROFILE.desiredJobTypes]);
+    setLocationPreference(DEFAULT_PROFILE.locationPreference);
+    setPreferredLocations(DEFAULT_PROFILE.preferredLocations.join(", "));
+    setSalaryMinUsd(DEFAULT_PROFILE.salaryMinUsd ?? 0);
+    setSalaryMaxUsd(DEFAULT_PROFILE.salaryMaxUsd);
+    setIndustries([...DEFAULT_PROFILE.interests]);
+    setIndustriesAvoid([]);
+
+    setSkillSearch("");
+    setSkillsSelected([...DEFAULT_PROFILE.skills]);
+    setSkillsPreferred([...DEFAULT_PROFILE.skillsPreferred]);
+    setSkillsAvoid([]);
+    setSkillsAvoidSearch("");
+
+    setSummary(DEFAULT_SUMMARY);
+
+    actions.patchProfile({
+      targetRole: DEFAULT_PROFILE.targetRole,
+      workMode: DEFAULT_PROFILE.workMode,
+      desiredJobTypes: DEFAULT_PROFILE.desiredJobTypes,
+      locationPreference: DEFAULT_PROFILE.locationPreference,
+      preferredLocations: DEFAULT_PROFILE.preferredLocations,
+      salaryMinUsd: DEFAULT_PROFILE.salaryMinUsd,
+      salaryMaxUsd: DEFAULT_PROFILE.salaryMaxUsd,
+      interests: DEFAULT_PROFILE.interests,
+      interestsAvoid: [],
+      skills: DEFAULT_PROFILE.skills,
+      skillsPreferred: DEFAULT_PROFILE.skillsPreferred,
+      skillsAvoid: []
+    });
+
+    actions.notify("Preferences reset.");
+  }
+
   return (
     <Card>
       <div className="flex items-center justify-between gap-3 flex-wrap">
@@ -241,7 +286,17 @@ export function ProfileSetupWizard() {
               }}
             />
           </div>
-          <div style={{ color: "var(--muted)", fontWeight: 650 }}>{STEP_PERCENT[step]}%</div>
+          <div className="flex items-center gap-2">
+            <div style={{ color: "var(--muted)", fontWeight: 650 }}>{STEP_PERCENT[step]}%</div>
+            <Button
+              variant="ghost"
+              onClick={resetPreferences}
+              style={{ padding: "6px 10px" }}
+              title="Reset preferences"
+            >
+              Reset
+            </Button>
+          </div>
         </div>
       </div>
 
