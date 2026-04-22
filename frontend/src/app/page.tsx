@@ -30,15 +30,86 @@ function Stat({ value, label }: { value: string; label: string }) {
 function HorizontalScroll({ children }: { children: React.ReactNode }) {
   return (
     <div
-      style={{
-        display: "flex",
-        gap: 12,
-        overflowX: "auto",
-        paddingBottom: 6,
-        scrollSnapType: "x mandatory"
-      }}
+      className="hide-scrollbar flex gap-3 overflow-x-auto pb-2 [scroll-snap-type:x_mandatory]"
     >
       {children}
+    </div>
+  );
+}
+
+function HeroPreview({ readiness }: { readiness: number }) {
+  return (
+    <div className="relative animate-[floaty_9s_ease-in-out_infinite]">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -inset-8 rounded-[32px] bg-gradient-to-br from-[color:var(--brand)]/25 via-transparent to-[color:var(--brand-2)]/25 blur-2xl"
+      />
+
+      <div className="relative rounded-[24px] border border-white/20 bg-[color:var(--surface-1)]/60 p-4 backdrop-blur">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_0_4px_rgba(52,211,153,0.18)]" />
+            <span className="text-[12px] font-semibold text-[color:var(--muted)]">Live preview</span>
+          </div>
+          <Badge>{readiness}% ready</Badge>
+        </div>
+
+        <Divider className="my-4" />
+
+        <div className="grid gap-3">
+          <div className="rounded-2xl border border-[color:var(--border-1)] bg-[color:var(--surface-2)] p-3">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <div className="text-[12px] text-[color:var(--muted)]">Job match</div>
+                <div className="mt-1 font-semibold leading-6">Frontend Engineer</div>
+                <div className="mt-1 text-[13px] text-[color:var(--muted)]">Remote (US) • $150k–$210k</div>
+              </div>
+              <Badge tone="ok">86%</Badge>
+            </div>
+            <div className="mt-3 flex gap-2 flex-wrap">
+              {["React", "Next.js", "A11y"].map((t) => (
+                <Badge key={t}>{t}</Badge>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-[color:var(--border-1)] bg-[color:var(--surface-2)] p-3">
+            <div className="text-[12px] text-[color:var(--muted)]">Autofill preview</div>
+            <div className="mt-2 grid gap-2">
+              {[
+                { k: "Full name", v: "Rashmi P." },
+                { k: "Email", v: "rashmi@example.com" },
+                { k: "LinkedIn", v: "linkedin.com/in/…" }
+              ].map((r) => (
+                <div key={r.k} className="flex items-center justify-between gap-3 rounded-xl border border-[color:var(--border-2)] bg-[color:var(--surface-1)] px-3 py-2">
+                  <span className="text-[12px] text-[color:var(--muted)]">{r.k}</span>
+                  <span className="text-[12px] font-semibold">{r.v}</span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-3 flex gap-2">
+              <Button className="px-3 py-2 text-[13px]">Approve & fill</Button>
+              <Button variant="secondary" className="px-3 py-2 text-[13px]">
+                Edit
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-4 rounded-2xl border border-[color:var(--border-1)] bg-gradient-to-br from-[color:var(--brand)]/12 to-[color:var(--brand-2)]/10 p-3">
+          <div className="flex items-center justify-between gap-2">
+            <div>
+              <div className="text-[12px] text-[color:var(--muted)]">Resume score</div>
+              <div className="mt-1 font-semibold">ATS alignment</div>
+            </div>
+            <div className="text-[20px] font-extrabold tracking-[-0.4px]">78</div>
+          </div>
+          <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/30">
+            <div className="h-full w-[78%] rounded-full bg-gradient-to-r from-[color:var(--brand)] to-[color:var(--brand-2)]" />
+          </div>
+          <div className="mt-2 text-[12px] text-[color:var(--muted)]">Missing: “design systems”, “performance profiling”</div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -57,7 +128,7 @@ function FeatureCard({
   meta?: string;
 }) {
   return (
-    <Card style={{ boxShadow: "none", background: "var(--surface-2)", padding: 16 }}>
+    <Card className="shadow-none bg-[color:var(--surface-2)] p-4">
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>
           <div className="font-semibold">{title}</div>
@@ -65,7 +136,7 @@ function FeatureCard({
           <div className="mt-2 text-[14px] leading-7 text-[color:var(--muted)]">{desc}</div>
         </div>
         <Link href={href}>
-          <Button style={{ padding: "8px 10px" }}>{cta}</Button>
+          <Button className="px-3 py-2 text-[13px]">{cta}</Button>
         </Link>
       </div>
     </Card>
@@ -88,12 +159,10 @@ export default function HomePage() {
   return (
     <main className="container">
       <Card
-        style={{
-          padding: 26,
-          background: "linear-gradient(180deg, rgba(109,94,252,0.14), rgba(46,196,182,0.07))"
-        }}
+        className="p-7"
+        style={{ background: "linear-gradient(180deg, rgba(109,94,252,0.18), rgba(46,196,182,0.08))" }}
       >
-        <div className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr] items-start">
+        <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] items-start">
           <div className="flex flex-col gap-4">
             <div className="flex gap-2 flex-wrap">
               <Badge>Job matches</Badge>
@@ -103,7 +172,7 @@ export default function HomePage() {
             </div>
 
             <div className="flex flex-col gap-3">
-              <h1 className="m-0 text-[42px] leading-[1.02] tracking-[-1px]">
+              <h1 className="m-0 text-[44px] leading-[1.02] tracking-[-1.2px]">
                 Your job search portal.
                 <br />
                 Powered by one profile.
@@ -116,15 +185,15 @@ export default function HomePage() {
 
             <div className="flex gap-3 flex-wrap">
               <Link href="/signup">
-                <Button style={{ padding: "12px 14px" }}>Join now — it’s free</Button>
+                <Button className="px-4 py-3">Join now — it’s free</Button>
               </Link>
               <Link href="/login">
-                <Button variant="secondary" style={{ padding: "12px 14px" }}>
+                <Button variant="secondary" className="px-4 py-3">
                   Log in
                 </Button>
               </Link>
               <Link href="/extension">
-                <Button variant="ghost" style={{ padding: "12px 14px" }}>
+                <Button variant="ghost" className="px-4 py-3">
                   Add extension (demo)
                 </Button>
               </Link>
@@ -136,14 +205,28 @@ export default function HomePage() {
               <Stat value="Preview-first" label="Approve before autofill" />
             </div>
           </div>
+          <HeroPreview readiness={profileCompleteness} />
         </div>
       </Card>
 
       <div className="h-6" />
 
+      <Card className="shadow-none p-4 bg-[color:var(--surface-1)]/70" style={{ backdropFilter: "blur(10px)" }}>
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div className="text-[13px] text-[color:var(--muted)]">
+            Built for people applying across startups, big tech, and everything in between.
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            {["Atlas", "Nimbus", "Beacon", "Relay", "Pinecone", "Acme"].map((t) => (
+              <Badge key={t}>{t}</Badge>
+            ))}
+          </div>
+        </div>
+      </Card>
+
       <div className="h-8" />
 
-      <Card style={{ boxShadow: "none", padding: 18 }}>
+      <Card className="shadow-none p-5">
         <SectionHeader
           title="We’re here for every step of your search"
           subtitle="Tell us your preferences and dealbreakers. We’ll match you with roles, help you tailor materials, and track progress."
@@ -183,7 +266,7 @@ export default function HomePage() {
 
       <div className="h-8" />
 
-      <Card style={{ boxShadow: "none", padding: 18 }}>
+      <Card className="shadow-none p-5">
         <SectionHeader
           title="What people say"
           subtitle="Placeholder testimonials to show layout (swap with real quotes later)."
@@ -198,7 +281,7 @@ export default function HomePage() {
             { role: "Product Manager", quote: "Tailored answers gave me a clean first draft.", outcome: "More consistent apps" }
           ].map((t) => (
             <div key={t.role} style={{ minWidth: 320, scrollSnapAlign: "start" }}>
-              <Card style={{ boxShadow: "none", background: "var(--surface-2)", padding: 16 }}>
+              <Card className="shadow-none bg-[color:var(--surface-2)] p-4">
                 <div className="text-[13px] text-[color:var(--muted)]">{t.role}</div>
                 <div className="mt-2 text-[15px] leading-7 font-semibold">“{t.quote}”</div>
                 <Divider />
@@ -211,14 +294,14 @@ export default function HomePage() {
 
       <div className="h-8" />
 
-      <Card style={{ boxShadow: "none", padding: 18 }}>
+      <Card className="shadow-none p-5">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <SectionHeader
             title="More tools to help you stand out"
             subtitle="Extra feature ideas (frontend UX placeholders)."
           />
           <Link href="/copilot">
-            <Button variant="secondary" style={{ padding: "10px 12px" }}>
+            <Button variant="secondary" className="px-3 py-2">
               Explore Copilot
             </Button>
           </Link>
@@ -233,7 +316,7 @@ export default function HomePage() {
             { title: "Handpicked job lists", desc: "Curated opportunities updated regularly." },
             { title: "Interview prep", desc: "Practice answers and refine your story." }
           ].map((c) => (
-            <Card key={c.title} style={{ boxShadow: "none", background: "var(--surface-2)", padding: 16 }}>
+            <Card key={c.title} className="shadow-none bg-[color:var(--surface-2)] p-4">
               <div className="font-semibold">{c.title}</div>
               <div className="mt-2 text-[14px] leading-7 text-[color:var(--muted)]">{c.desc}</div>
               <div className="mt-3">
@@ -246,7 +329,7 @@ export default function HomePage() {
 
       <div className="h-8" />
 
-      <Card style={{ boxShadow: "none", padding: 18 }}>
+      <Card className="shadow-none p-5">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <SectionHeader
             title="Explore curated job lists"
@@ -254,17 +337,17 @@ export default function HomePage() {
           />
           <div className="flex gap-2 flex-wrap">
             <Link href="/latest-jobs">
-              <Button variant="secondary" style={{ padding: "10px 12px" }}>
+              <Button variant="secondary" className="px-3 py-2">
                 Search jobs
               </Button>
             </Link>
             <Link href="/internships">
-              <Button variant="ghost" style={{ padding: "10px 12px" }}>
+              <Button variant="ghost" className="px-3 py-2">
                 Internships
               </Button>
             </Link>
             <Link href="/remote">
-              <Button variant="ghost" style={{ padding: "10px 12px" }}>
+              <Button variant="ghost" className="px-3 py-2">
                 Remote work
               </Button>
             </Link>
@@ -282,12 +365,12 @@ export default function HomePage() {
             "UI/UX design roles"
           ].map((name) => (
             <div key={name} style={{ minWidth: 260, scrollSnapAlign: "start" }}>
-              <Card style={{ boxShadow: "none", background: "var(--surface-2)", padding: 14 }}>
+              <Card className="shadow-none bg-[color:var(--surface-2)] p-4">
                 <div className="font-semibold">{name}</div>
                 <div className="mt-2 text-[13px] text-[color:var(--muted)]">Updated regularly (demo)</div>
                 <div className="mt-3">
                   <Link href="/latest-jobs">
-                    <Button variant="secondary" style={{ padding: "8px 10px" }}>
+                    <Button variant="secondary" className="px-3 py-2 text-[13px]">
                       Explore
                     </Button>
                   </Link>
@@ -323,4 +406,3 @@ export default function HomePage() {
     </main>
   );
 }
-

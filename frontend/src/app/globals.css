@@ -79,6 +79,8 @@
       radial-gradient(900px 600px at 85% 5%, var(--hero-grad-2), transparent 55%),
       radial-gradient(900px 700px at 70% 90%, var(--hero-grad-3), transparent 60%),
       var(--bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   a {
@@ -141,3 +143,23 @@
   }
 }
 
+@layer utilities {
+  .hide-scrollbar {
+    scrollbar-width: none;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  @keyframes floaty {
+    0% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-6px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
+}

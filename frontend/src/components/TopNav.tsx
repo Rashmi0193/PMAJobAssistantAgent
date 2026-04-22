@@ -2,8 +2,26 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/context/AuthContext";
+
+function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
+  const pathname = usePathname();
+  const active = pathname === href;
+  return (
+    <Link
+      href={href}
+      className={[
+        "rounded-xl px-3 py-2 text-[14px] font-semibold transition-colors",
+        active ? "bg-[color:var(--surface-2)]" : "hover:bg-[color:var(--surface-2)]",
+        "text-[color:var(--muted)] hover:text-[color:var(--text)]"
+      ].join(" ")}
+    >
+      {children}
+    </Link>
+  );
+}
 
 export function TopNav() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
@@ -45,78 +63,65 @@ export function TopNav() {
       <div
         className="container"
         style={{
-          paddingTop: 14,
-          paddingBottom: 14,
+          paddingTop: 12,
+          paddingBottom: 12,
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center"
         }}
       >
-        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <Link href="/" className="flex items-center gap-3">
           <div
             aria-hidden
+            className="h-8 w-8 rounded-xl shadow-[0_12px_30px_rgba(109,94,252,0.22)]"
             style={{
-              width: 28,
-              height: 28,
-              borderRadius: 10,
-              background:
-                "linear-gradient(135deg, var(--brand), var(--brand-2))",
-              boxShadow: "0 10px 30px rgba(109,94,252,0.18)"
+              background: "linear-gradient(135deg, var(--brand), var(--brand-2))"
             }}
           />
-          <span style={{ fontWeight: 700, letterSpacing: -0.2 }}>
-            Job Application Assistant
-          </span>
+          <span className="font-extrabold tracking-[-0.3px]">Job Assistant</span>
         </Link>
         <nav
           style={{
             display: "flex",
             gap: 14,
-            color: "var(--muted)",
             alignItems: "center",
             flexWrap: "wrap",
             justifyContent: "flex-end"
           }}
         >
-          <Link href="/copilot">Copilot</Link>
-          <Link href="/employers">Employers</Link>
-          <Link href="/blog">Blog</Link>
-          <Link href="/latest-jobs">Jobs</Link>
+          <NavLink href="/copilot">Copilot</NavLink>
+          <NavLink href="/employers">Employers</NavLink>
+          <NavLink href="/blog">Blog</NavLink>
+          <NavLink href="/latest-jobs">Jobs</NavLink>
           {auth.user ? (
             <>
               <span aria-hidden style={{ width: 1, height: 18, background: "var(--border-2)" }} />
-              <Link href="/jobs-for-you">Jobs for you</Link>
-              <Link href="/job-tracker">Job Tracker</Link>
-              <Link href="/resume-builder">Resume Builder</Link>
+              <NavLink href="/jobs-for-you">Jobs for you</NavLink>
+              <NavLink href="/job-tracker">Job Tracker</NavLink>
+              <NavLink href="/resume-builder">Resume Builder</NavLink>
             </>
           ) : null}
           <span aria-hidden style={{ width: 1, height: 18, background: "var(--border-2)" }} />
           {auth.user ? (
             <>
-              <Link href="/profile-setup" style={{ color: "var(--muted)" }}>
-                Setup
-              </Link>
-              <Button
-                variant="ghost"
-                onClick={() => authActions.logout()}
-                style={{ padding: "8px 10px" }}
-              >
+              <NavLink href="/profile-setup">Setup</NavLink>
+              <Button variant="ghost" onClick={() => authActions.logout()} className="px-3 py-2 text-[13px]">
                 Log out
               </Button>
             </>
           ) : (
             <>
               <Link href="/login">
-                <Button variant="ghost" style={{ padding: "8px 10px" }}>
+                <Button variant="ghost" className="px-3 py-2 text-[13px]">
                   Log in
                 </Button>
               </Link>
               <Link href="/signup">
-                <Button style={{ padding: "8px 10px" }}>Sign up</Button>
+                <Button className="px-3 py-2 text-[13px]">Sign up</Button>
               </Link>
             </>
           )}
-          <Button variant="ghost" onClick={toggleTheme} style={{ padding: "8px 10px" }}>
+          <Button variant="ghost" onClick={toggleTheme} className="px-3 py-2 text-[13px]">
             {theme === "dark" ? "Light" : "Dark"}
           </Button>
         </nav>

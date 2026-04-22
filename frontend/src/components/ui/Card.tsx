@@ -7,11 +7,13 @@ export function Card({
   return (
     <div
       {...props}
+      className={[
+        "rounded-[var(--radius)] border border-[color:var(--border-1)] bg-[color:var(--surface-1)] shadow-[var(--shadow)]",
+        props.className
+      ]
+        .filter(Boolean)
+        .join(" ")}
       style={{
-        background: "var(--surface-1)",
-        border: "1px solid var(--border-1)",
-        borderRadius: "var(--radius)",
-        boxShadow: "var(--shadow)",
         padding: 16,
         ...props.style
       }}
