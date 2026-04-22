@@ -136,51 +136,10 @@ export default function HomePage() {
               <Stat value="Preview-first" label="Approve before autofill" />
             </div>
           </div>
-
-          <Card style={{ boxShadow: "none", padding: 18, background: "rgba(0,0,0,0.03)" }}>
-            <div className="flex items-start justify-between gap-3 flex-wrap">
-              <div className="flex flex-col gap-1">
-                <div className="text-[14px] font-semibold">Trusted UI patterns</div>
-                <div className="text-[13px] text-[color:var(--muted)]">Agentic UX: show work, allow intervention.</div>
-              </div>
-              <Badge>Demo</Badge>
-            </div>
-            <Divider />
-            <div className="grid gap-2 text-[14px] text-[color:var(--muted)]">
-              <div className="flex justify-between gap-3">
-                <span>Tasks run</span>
-                <span className="text-[color:var(--text)]">{state.tasks.length}</span>
-              </div>
-              <div className="flex justify-between gap-3">
-                <span>Applications tracked</span>
-                <span className="text-[color:var(--text)]">{state.applications.length}</span>
-              </div>
-              <div className="flex justify-between gap-3">
-                <span>Feedback entries</span>
-                <span className="text-[color:var(--text)]">{state.feedback.length}</span>
-              </div>
-            </div>
-            <Divider />
-            <div className="text-[12px] leading-6 text-[color:var(--faint)]">
-              This is a frontend prototype. Your backend teammate can connect AI + crawling later while the UX stays the
-              same.
-            </div>
-          </Card>
         </div>
       </Card>
 
       <div className="h-6" />
-
-      <Card style={{ boxShadow: "none", padding: 16 }}>
-        <div className="flex items-center justify-between gap-4 flex-wrap">
-          <div className="text-[13px] text-[color:var(--muted)]">Built for job seekers applying to teams like</div>
-          <div className="flex gap-2 flex-wrap">
-            {["Atlas", "Nimbus", "Beacon", "Relay", "Pinecone", "Acme"].map((t) => (
-              <Badge key={t}>{t}</Badge>
-            ))}
-          </div>
-        </div>
-      </Card>
 
       <div className="h-8" />
 
