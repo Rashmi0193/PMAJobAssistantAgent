@@ -22,6 +22,9 @@ export type Profile = {
   tone: Tone;
   skills: string[];
   interests: string[];
+  interestsAvoid: string[];
+  skillsPreferred: string[];
+  skillsAvoid: string[];
   desiredJobTypes: Array<"Full-time" | "Internship" | "Contract">;
   workMode: "Remote" | "Hybrid" | "Onsite" | "Open";
   locationPreference: "US" | "Worldwide" | "Specific";
@@ -128,6 +131,9 @@ const DEFAULT_PROFILE: Profile = {
   tone: "Warm",
   skills: ["React", "TypeScript", "Next.js"],
   interests: ["Startups", "Product teams"],
+  interestsAvoid: [],
+  skillsPreferred: ["React"],
+  skillsAvoid: [],
   desiredJobTypes: ["Full-time"],
   workMode: "Open",
   locationPreference: "US",

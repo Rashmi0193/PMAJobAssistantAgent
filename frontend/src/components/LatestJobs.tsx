@@ -16,6 +16,8 @@ export type JobPost = {
   type: "Full-time" | "Internship";
   mode: "Remote" | "Hybrid" | "Onsite";
   level: "Junior" | "Mid" | "Senior";
+  salaryMinUsd?: number;
+  salaryMaxUsd?: number;
   tags: string[];
 };
 
@@ -28,6 +30,8 @@ const MOCK_JOBS: JobPost[] = [
     type: "Full-time",
     mode: "Hybrid",
     level: "Senior",
+    salaryMinUsd: 190000,
+    salaryMaxUsd: 260000,
     tags: ["React", "TypeScript", "Performance"]
   },
   {
@@ -38,6 +42,8 @@ const MOCK_JOBS: JobPost[] = [
     type: "Full-time",
     mode: "Remote",
     level: "Mid",
+    salaryMinUsd: 150000,
+    salaryMaxUsd: 210000,
     tags: ["Next.js", "Design systems", "A11y"]
   },
   {
@@ -48,6 +54,8 @@ const MOCK_JOBS: JobPost[] = [
     type: "Internship",
     mode: "Onsite",
     level: "Junior",
+    salaryMinUsd: 35000,
+    salaryMaxUsd: 55000,
     tags: ["JavaScript", "React", "Mentorship"]
   },
   {
@@ -58,6 +66,8 @@ const MOCK_JOBS: JobPost[] = [
     type: "Full-time",
     mode: "Remote",
     level: "Senior",
+    salaryMinUsd: 180000,
+    salaryMaxUsd: 250000,
     tags: ["APIs", "Postgres", "Observability"]
   },
   {
@@ -68,6 +78,8 @@ const MOCK_JOBS: JobPost[] = [
     type: "Full-time",
     mode: "Hybrid",
     level: "Mid",
+    salaryMinUsd: 165000,
+    salaryMaxUsd: 230000,
     tags: ["LLMs", "Prompting", "Evaluation"]
   }
 ];
@@ -195,4 +207,3 @@ export function LatestJobs({ preset }: { preset?: "remote" | "internships" }) {
     </div>
   );
 }
-

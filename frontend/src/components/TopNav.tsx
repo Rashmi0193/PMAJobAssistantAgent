@@ -79,10 +79,17 @@ export function TopNav() {
           }}
         >
           <Link href="/copilot">Copilot</Link>
-          <Link href="/job-tracker">Job Tracker</Link>
-          <Link href="/resume-builder">Resume Builder</Link>
-          <Link href="/latest-jobs">Latest Jobs</Link>
           <Link href="/employers">Employers</Link>
+          <Link href="/blog">Blog</Link>
+          <Link href="/latest-jobs">Jobs</Link>
+          {auth.user ? (
+            <>
+              <span aria-hidden style={{ width: 1, height: 18, background: "var(--border-2)" }} />
+              <Link href="/jobs-for-you">Jobs for you</Link>
+              <Link href="/job-tracker">Job Tracker</Link>
+              <Link href="/resume-builder">Resume Builder</Link>
+            </>
+          ) : null}
           <span aria-hidden style={{ width: 1, height: 18, background: "var(--border-2)" }} />
           {auth.user ? (
             <>

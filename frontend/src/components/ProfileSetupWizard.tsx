@@ -11,18 +11,81 @@ import { Field } from "@/components/ui/Field";
 import { Input, Textarea } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 
-type Step = 1 | 2 | 3;
+type Step = 1 | 2 | 3 | 4;
 
-const INTEREST_PRESETS = [
-  "Startups",
-  "Big Tech",
-  "AI/ML",
-  "FinTech",
+const STEP_PERCENT: Record<Step, number> = { 1: 60, 2: 70, 3: 80, 4: 90 };
+
+const INDUSTRY_PRESETS = [
+  "Aerospace",
+  "AI & Machine Learning",
+  "Automotive & Transportation",
+  "Biotechnology",
+  "Consulting",
+  "Consumer Goods",
+  "Consumer Software",
+  "Crypto & Web3",
+  "Cybersecurity",
+  "Data & Analytics",
+  "Defense",
+  "Design",
+  "Education",
+  "Energy",
+  "Enterprise Software",
+  "Entertainment",
+  "Financial Services",
+  "Fintech",
+  "Food & Agriculture",
+  "Gaming",
+  "Government & Public Sector",
+  "Hardware",
   "Healthcare",
-  "EdTech",
-  "Consumer apps",
-  "B2B SaaS"
+  "Industrial & Manufacturing",
+  "Legal",
+  "Quantitative Finance",
+  "Real Estate",
+  "Robotics & Automation",
+  "Social Impact",
+  "Venture Capital",
+  "VR & AR"
 ];
+
+const SKILL_PRESETS = [
+  "React",
+  "TypeScript",
+  "Next.js",
+  "JavaScript",
+  "HTML/CSS",
+  "Accessibility",
+  "Testing",
+  "Jest",
+  "Cypress",
+  "Playwright",
+  "Node.js",
+  "REST APIs",
+  "GraphQL",
+  "Git",
+  "Design Systems",
+  "Figma",
+  "Performance",
+  "Web Security",
+  "Python",
+  "SQL"
+];
+
+function chipStyle(active: boolean) {
+  return {
+    padding: "8px 10px",
+    borderRadius: 999,
+    border: `1px solid ${active ? "rgba(109,94,252,0.45)" : "var(--border-1)"}`,
+    background: active ? "rgba(109,94,252,0.10)" : "transparent",
+    cursor: "pointer"
+  } as const;
+}
+
+function formatUsdCompact(value: number) {
+  if (value >= 1000) return `$${Math.round(value / 1000)}k`;
+  return `$${value}`;
+}
 
 export function ProfileSetupWizard() {
   const router = useRouter();
@@ -36,20 +99,73 @@ export function ProfileSetupWizard() {
   const [desiredJobTypes, setDesiredJobTypes] = useState(state.profile.desiredJobTypes);
   const [locationPreference, setLocationPreference] = useState(state.profile.locationPreference);
   const [preferredLocations, setPreferredLocations] = useState(state.profile.preferredLocations.join(", "));
-  const [salaryMinUsd, setSalaryMinUsd] = useState(state.profile.salaryMinUsd ? String(state.profile.salaryMinUsd) : "");
-  const [salaryMaxUsd, setSalaryMaxUsd] = useState(state.profile.salaryMaxUsd ? String(state.profile.salaryMaxUsd) : "");
-  const [interests, setInterests] = useState<string[]>(state.profile.interests);
-  const [skills, setSkills] = useState(state.profile.skills.join(", "));
+  const [salaryMinUsd, setSalaryMinUsd] = useState<number>(state.profile.salaryMinUsd ?? 0);
+  const [salaryMaxUsd, setSalaryMaxUsd] = useState<number | undefined>(state.profile.salaryMaxUsd);
+  const [industries, setIndustries] = useState<string[]>(state.profile.interests);
+  const [industriesAvoid, setIndustriesAvoid] = useState<string[]>(state.profile.interestsAvoid);
+
+  const [skillSearch, setSkillSearch] = useState("");
+  const [skillsSelected, setSkillsSelected] = useState<string[]>(state.profile.skills);
+  const [skillsPreferred, setSkillsPreferred] = useState<string[]>(state.profile.skillsPreferred);
+  const [skillsAvoid, setSkillsAvoid] = useState<string[]>(state.profile.skillsAvoid);
+  const [skillsAvoidSearch, setSkillsAvoidSearch] = useState("");
+
   const [summary, setSummary] = useState(
     "I build clean, accessible UI and ship features end-to-end with React/TypeScript."
   );
 
   const canContinueStep1 = useMemo(() => targetRole.trim().length > 1, [targetRole]);
-  const salaryMin = Number(salaryMinUsd || 0) || undefined;
-  const salaryMax = Number(salaryMaxUsd || 0) || undefined;
 
-  function toggleInterest(tag: string) {
-    setInterests((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [tag, ...prev]));
+  const filteredSkills = useMemo(() => {
+    const q = skillSearch.trim().toLowerCase();
+    const base = [...new Set([...SKILL_PRESETS, ...skillsSelected])];
+    if (!q) return base;
+    return base.filter((s) => s.toLowerCase().includes(q));
+  }, [skillSearch, skillsSelected]);
+
+  const filteredAvoidSkills = useMemo(() => {
+    const q = skillsAvoidSearch.trim().toLowerCase();
+    const base = [...new Set([...SKILL_PRESETS, ...skillsAvoid])];
+    if (!q) return base;
+    return base.filter((s) => s.toLowerCase().includes(q));
+  }, [skillsAvoid, skillsAvoidSearch]);
+
+  function toggleIndustryInclude(tag: string) {
+    setIndustries((prev) => {
+      const next = prev.includes(tag) ? prev.filter((t) => t !== tag) : [tag, ...prev];
+      return next;
+    });
+    setIndustriesAvoid((prev) => prev.filter((t) => t !== tag));
+  }
+
+  function toggleIndustryAvoid(tag: string) {
+    setIndustriesAvoid((prev) => {
+      const next = prev.includes(tag) ? prev.filter((t) => t !== tag) : [tag, ...prev];
+      return next;
+    });
+    setIndustries((prev) => prev.filter((t) => t !== tag));
+  }
+
+  function toggleSkillSelected(skill: string) {
+    setSkillsSelected((prev) =>
+      prev.includes(skill) ? prev.filter((s) => s !== skill) : [...prev, skill]
+    );
+    setSkillsAvoid((prev) => prev.filter((s) => s !== skill));
+  }
+
+  function toggleSkillAvoid(skill: string) {
+    setSkillsAvoid((prev) =>
+      prev.includes(skill) ? prev.filter((s) => s !== skill) : [...prev, skill]
+    );
+    setSkillsSelected((prev) => prev.filter((s) => s !== skill));
+    setSkillsPreferred((prev) => prev.filter((s) => s !== skill));
+  }
+
+  function toggleSkillPreferred(skill: string) {
+    if (!skillsSelected.includes(skill)) return;
+    setSkillsPreferred((prev) =>
+      prev.includes(skill) ? prev.filter((s) => s !== skill) : [skill, ...prev]
+    );
   }
 
   function toggleJobType(type: "Full-time" | "Internship" | "Contract") {
@@ -70,28 +186,72 @@ export function ProfileSetupWizard() {
         .split(",")
         .map((s) => s.trim())
         .filter(Boolean),
-      salaryMinUsd: salaryMin,
-      salaryMaxUsd: salaryMax,
-      interests,
-      skills: skills
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean)
-        .slice(0, 25)
+      salaryMinUsd: salaryMinUsd || undefined,
+      salaryMaxUsd,
+      interests: industries.slice(0, 20),
+      interestsAvoid: industriesAvoid.slice(0, 20),
+      skills: skillsSelected.slice(0, 25),
+      skillsPreferred: skillsPreferred.filter((s) => skillsSelected.includes(s)).slice(0, 10),
+      skillsAvoid: skillsAvoid.slice(0, 25)
     });
     actions.notify("Profile setup saved locally.");
   }
 
   return (
     <Card>
-      <div className="flex items-start justify-between gap-3 flex-wrap">
-        <div className="flex flex-col gap-1">
-          <h1 className="m-0 text-[22px] tracking-[-0.2px]">Profile setup</h1>
-          <p className="m-0 text-[14px] leading-6 text-[color:var(--muted)]">
-            Answer a few questions so the copilot can tailor scoring, answers, and job suggestions.
-          </p>
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <button
+          onClick={() => {
+            if (step === 1) {
+              router.push("/");
+              return;
+            }
+            setStep(step === 2 ? 1 : step === 3 ? 2 : 3);
+          }}
+          style={{
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
+            padding: 0,
+            color: "var(--muted)",
+            display: "flex",
+            alignItems: "center",
+            gap: 8
+          }}
+        >
+          <span aria-hidden>←</span> Back
+        </button>
+        <div className="flex items-center gap-10 min-w-[260px] flex-1 justify-end">
+          <div
+            aria-hidden
+            style={{
+              height: 8,
+              flex: 1,
+              maxWidth: 360,
+              background: "var(--border-2)",
+              borderRadius: 999,
+              overflow: "hidden"
+            }}
+          >
+            <div
+              style={{
+                height: "100%",
+                width: `${STEP_PERCENT[step]}%`,
+                background: "linear-gradient(90deg, var(--brand), var(--brand-2))"
+              }}
+            />
+          </div>
+          <div style={{ color: "var(--muted)", fontWeight: 650 }}>{STEP_PERCENT[step]}%</div>
         </div>
-        <Badge>Step {step} / 3</Badge>
+      </div>
+
+      <div className="h-10" />
+
+      <div className="flex flex-col gap-2 text-center">
+        <h1 className="m-0 text-[28px] tracking-[-0.5px]">Set your preferences</h1>
+        <p className="m-0 text-[14px] leading-6 text-[color:var(--muted)]">
+          This helps the copilot recommend jobs and tailor your application materials.
+        </p>
       </div>
 
       <Divider />
@@ -172,15 +332,6 @@ export function ProfileSetupWizard() {
                 placeholder="SF Bay Area, Remote (US)"
               />
             </Field>
-
-            <div className="grid gap-12 md:grid-cols-2">
-              <Field label="Expected salary min (USD)">
-                <Input inputMode="numeric" value={salaryMinUsd} onChange={(e) => setSalaryMinUsd(e.target.value)} placeholder="120000" />
-              </Field>
-              <Field label="Expected salary max (USD)">
-                <Input inputMode="numeric" value={salaryMaxUsd} onChange={(e) => setSalaryMaxUsd(e.target.value)} placeholder="180000" />
-              </Field>
-            </div>
           </div>
 
           <div className="flex gap-2 flex-wrap justify-end">
@@ -200,32 +351,48 @@ export function ProfileSetupWizard() {
 
       {step === 2 ? (
         <div className="grid gap-12">
-          <Section
-            title="Interests"
-            subtitle="These influence job suggestions and tone."
-          >
-            <div className="flex gap-2 flex-wrap">
-              {INTEREST_PRESETS.map((t) => (
-                <button
-                  key={t}
-                  onClick={() => toggleInterest(t)}
-                  style={{
-                    padding: "8px 10px",
-                    borderRadius: 999,
-                    border: `1px solid ${interests.includes(t) ? "rgba(109,94,252,0.45)" : "var(--border-1)"}`,
-                    background: interests.includes(t) ? "rgba(109,94,252,0.10)" : "transparent",
-                    cursor: "pointer"
-                  }}
-                >
-                  {t}
-                </button>
-              ))}
-            </div>
-          </Section>
+          <div className="text-center">
+            <h2 className="m-0 text-[22px] tracking-[-0.4px]">What industries are exciting to you?</h2>
+          </div>
 
-          <Field label="Top skills (comma separated)" hint="Used for resume scoring and tailored answers.">
-            <Input value={skills} onChange={(e) => setSkills(e.target.value)} placeholder="React, TypeScript, Next.js, Accessibility" />
-          </Field>
+          <div className="grid gap-12">
+            <div className="grid gap-2">
+              <div className="flex items-center gap-2 text-[14px] text-[color:var(--muted)]">
+                <span aria-hidden>✅</span>
+                <span>First, what industries are exciting to you?</span>
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                {INDUSTRY_PRESETS.map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => toggleIndustryInclude(t)}
+                    style={chipStyle(industries.includes(t))}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <Card style={{ boxShadow: "none", background: "var(--surface-2)" }}>
+              <div className="flex items-center gap-2 text-[14px] text-[color:var(--muted)]">
+                <span aria-hidden>⛔</span>
+                <span>Second, are there any industries you don’t want to work in?</span>
+              </div>
+              <div className="h-10" />
+              <div className="flex gap-2 flex-wrap">
+                {INDUSTRY_PRESETS.map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => toggleIndustryAvoid(t)}
+                    style={chipStyle(industriesAvoid.includes(t))}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </Card>
+          </div>
 
           <div className="flex gap-2 flex-wrap justify-between">
             <Button variant="ghost" onClick={() => setStep(1)} style={{ padding: "12px 14px" }}>
@@ -246,11 +413,206 @@ export function ProfileSetupWizard() {
 
       {step === 3 ? (
         <div className="grid gap-12">
-          <Section title="About you" subtitle="Optional, but helpful for tailored answers.">
-            <Field label="Short summary">
-              <Textarea rows={5} value={summary} onChange={(e) => setSummary(e.target.value)} />
+          <div className="text-center">
+            <h2 className="m-0 text-[22px] tracking-[-0.4px]">What skills do you have or enjoy working with?</h2>
+            <p className="mt-2 mb-0 text-[14px] text-[color:var(--muted)]">Select all that apply</p>
+          </div>
+
+          <Card style={{ boxShadow: "none", background: "var(--surface-2)" }}>
+            <div className="flex items-center gap-2 text-[13px] text-[color:var(--muted)]">
+              <span aria-hidden>💙</span>
+              <span>Heart a skill to prefer roles that utilize that skill.</span>
+            </div>
+          </Card>
+
+          <Field label="Search skills">
+            <Input
+              value={skillSearch}
+              onChange={(e) => setSkillSearch(e.target.value)}
+              placeholder="Search all skills…"
+            />
+          </Field>
+
+          <div className="flex gap-2 flex-wrap">
+            {filteredSkills.slice(0, 36).map((s) => (
+              <button
+                key={s}
+                onClick={() => toggleSkillSelected(s)}
+                style={chipStyle(skillsSelected.includes(s))}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+
+          <div className="grid gap-2">
+            <div className="text-[13px] text-[color:var(--muted)] font-semibold">Selected skills</div>
+            <div className="flex gap-2 flex-wrap">
+              {skillsSelected.length ? (
+                skillsSelected.slice(0, 30).map((s) => (
+                  <div
+                    key={s}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 8,
+                      padding: "8px 10px",
+                      borderRadius: 999,
+                      border: "1px solid var(--border-1)",
+                      background: "var(--surface-2)"
+                    }}
+                  >
+                    <button
+                      onClick={() => toggleSkillPreferred(s)}
+                      title="Prefer roles with this skill"
+                      style={{
+                        background: "transparent",
+                        border: "none",
+                        cursor: "pointer",
+                        padding: 0,
+                        color: skillsPreferred.includes(s) ? "var(--brand)" : "var(--muted)"
+                      }}
+                    >
+                      {skillsPreferred.includes(s) ? "♥" : "♡"}
+                    </button>
+                    <span>{s}</span>
+                    <button
+                      onClick={() => toggleSkillSelected(s)}
+                      title="Remove"
+                      style={{
+                        background: "transparent",
+                        border: "none",
+                        cursor: "pointer",
+                        padding: 0,
+                        color: "var(--muted)"
+                      }}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <div className="text-[13px] text-[color:var(--faint)]">No skills selected yet.</div>
+              )}
+            </div>
+          </div>
+
+          <Card style={{ boxShadow: "none", background: "var(--surface-2)" }}>
+            <div className="flex items-center gap-2 text-[14px] text-[color:var(--muted)]">
+              <span aria-hidden>⛔</span>
+              <span>Are there any skills you don’t want to work with?</span>
+            </div>
+            <div className="h-10" />
+            <Field label="Skills to filter out">
+              <Input
+                value={skillsAvoidSearch}
+                onChange={(e) => setSkillsAvoidSearch(e.target.value)}
+                placeholder="Search skills to filter out…"
+              />
             </Field>
-          </Section>
+            <div className="flex gap-2 flex-wrap">
+              {filteredAvoidSkills.slice(0, 28).map((s) => (
+                <button
+                  key={s}
+                  onClick={() => toggleSkillAvoid(s)}
+                  style={chipStyle(skillsAvoid.includes(s))}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          </Card>
+
+          <div className="flex gap-2 flex-wrap justify-between">
+            <Button variant="ghost" onClick={() => setStep(2)} style={{ padding: "12px 14px" }}>
+              Back
+            </Button>
+            <Button
+              onClick={() => {
+                saveToProfile();
+                setStep(4);
+              }}
+              style={{ padding: "12px 14px" }}
+            >
+              Continue
+            </Button>
+          </div>
+        </div>
+      ) : null}
+
+      {step === 4 ? (
+        <div className="grid gap-12">
+          <div className="text-center">
+            <h2 className="m-0 text-[22px] tracking-[-0.4px]">What is your minimum expected salary?</h2>
+            <p className="mt-2 mb-0 text-[14px] text-[color:var(--muted)]">
+              We only use this to match you with jobs and will not share this data.
+            </p>
+          </div>
+
+          <div className="flex items-center justify-center">
+            <div
+              style={{
+                width: 190,
+                height: 190,
+                borderRadius: "50%",
+                border: "1px solid var(--border-1)",
+                background: "var(--surface-2)",
+                display: "grid",
+                placeItems: "center"
+              }}
+            >
+              <div className="text-center">
+                <div className="text-[13px] text-[color:var(--muted)]">At least</div>
+                <div className="text-[34px] font-extrabold tracking-[-0.6px]">
+                  {formatUsdCompact(salaryMinUsd)}
+                </div>
+                <div
+                  style={{
+                    margin: "6px auto 0",
+                    width: 46,
+                    padding: "4px 8px",
+                    borderRadius: 999,
+                    border: "1px solid var(--border-1)",
+                    background: "var(--surface-2)",
+                    fontSize: 12,
+                    color: "var(--muted)"
+                  }}
+                >
+                  USD
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ padding: "0 10px" }}>
+            <input
+              type="range"
+              min={0}
+              max={300000}
+              step={5000}
+              value={salaryMinUsd}
+              onChange={(e) => setSalaryMinUsd(Number(e.target.value))}
+              style={{ width: "100%" }}
+            />
+            <div className="flex justify-between text-[12px] text-[color:var(--faint)]">
+              <span>$0</span>
+              <span>$300k+</span>
+            </div>
+          </div>
+
+          <div className="grid gap-12 md:grid-cols-2">
+            <Field label="Optional salary max (USD)">
+              <Input
+                inputMode="numeric"
+                value={salaryMaxUsd ? String(salaryMaxUsd) : ""}
+                onChange={(e) => setSalaryMaxUsd(e.target.value ? Number(e.target.value) : undefined)}
+                placeholder="180000"
+              />
+            </Field>
+            <Field label="Short summary (optional)" hint="Used for tailored answers.">
+              <Textarea rows={3} value={summary} onChange={(e) => setSummary(e.target.value)} />
+            </Field>
+          </div>
 
           <Card style={{ boxShadow: "none", background: "var(--surface-2)" }}>
             <h3 className="m-0 text-[14px]">Preview</h3>
@@ -268,23 +630,24 @@ export function ProfileSetupWizard() {
             <p className="mt-2 mb-0 text-[13px] leading-6 text-[color:var(--muted)]">
               Salary:{" "}
               <span className="text-[color:var(--text)] font-semibold">
-                {salaryMinUsd || "—"} - {salaryMaxUsd || "—"}
+                {salaryMinUsd ? `$${salaryMinUsd.toLocaleString()}` : "—"} -{" "}
+                {salaryMaxUsd ? `$${salaryMaxUsd.toLocaleString()}` : "—"}
               </span>
             </p>
           </Card>
 
           <div className="flex gap-2 flex-wrap justify-between">
-            <Button variant="ghost" onClick={() => setStep(2)} style={{ padding: "12px 14px" }}>
+            <Button variant="ghost" onClick={() => setStep(3)} style={{ padding: "12px 14px" }}>
               Back
             </Button>
             <Button
               onClick={() => {
                 saveToProfile();
-                router.push("/copilot");
+                router.push("/jobs-for-you");
               }}
               style={{ padding: "12px 14px" }}
             >
-              Finish & go to Copilot
+              Finish & see jobs
             </Button>
           </div>
         </div>
@@ -312,4 +675,3 @@ function Section({
     </div>
   );
 }
-
