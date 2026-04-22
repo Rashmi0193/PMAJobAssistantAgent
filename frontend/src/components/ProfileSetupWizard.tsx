@@ -286,17 +286,7 @@ export function ProfileSetupWizard() {
               }}
             />
           </div>
-          <div className="flex items-center gap-2">
-            <div style={{ color: "var(--muted)", fontWeight: 650 }}>{STEP_PERCENT[step]}%</div>
-            <Button
-              variant="ghost"
-              onClick={resetPreferences}
-              style={{ padding: "6px 10px" }}
-              title="Reset preferences"
-            >
-              Reset
-            </Button>
-          </div>
+          <div style={{ color: "var(--muted)", fontWeight: 650 }}>{STEP_PERCENT[step]}%</div>
         </div>
       </div>
 
@@ -390,6 +380,9 @@ export function ProfileSetupWizard() {
           </div>
 
           <div className="flex gap-2 flex-wrap justify-end">
+            <Button variant="ghost" onClick={resetPreferences} style={{ padding: "12px 14px" }}>
+              Reset
+            </Button>
             <Button
               disabled={!canContinueStep1}
               onClick={() => {
@@ -453,15 +446,20 @@ export function ProfileSetupWizard() {
             <Button variant="ghost" onClick={() => setStep(1)} style={{ padding: "12px 14px" }}>
               Back
             </Button>
-            <Button
-              onClick={() => {
-                saveToProfile();
-                setStep(3);
-              }}
-              style={{ padding: "12px 14px" }}
-            >
-              Continue
-            </Button>
+            <div className="flex gap-2 flex-wrap justify-end">
+              <Button variant="ghost" onClick={resetPreferences} style={{ padding: "12px 14px" }}>
+                Reset
+              </Button>
+              <Button
+                onClick={() => {
+                  saveToProfile();
+                  setStep(3);
+                }}
+                style={{ padding: "12px 14px" }}
+              >
+                Continue
+              </Button>
+            </div>
           </div>
         </div>
       ) : null}
@@ -582,15 +580,20 @@ export function ProfileSetupWizard() {
             <Button variant="ghost" onClick={() => setStep(2)} style={{ padding: "12px 14px" }}>
               Back
             </Button>
-            <Button
-              onClick={() => {
-                saveToProfile();
-                setStep(4);
-              }}
-              style={{ padding: "12px 14px" }}
-            >
-              Continue
-            </Button>
+            <div className="flex gap-2 flex-wrap justify-end">
+              <Button variant="ghost" onClick={resetPreferences} style={{ padding: "12px 14px" }}>
+                Reset
+              </Button>
+              <Button
+                onClick={() => {
+                  saveToProfile();
+                  setStep(4);
+                }}
+                style={{ padding: "12px 14px" }}
+              >
+                Continue
+              </Button>
+            </div>
           </div>
         </div>
       ) : null}
@@ -695,15 +698,20 @@ export function ProfileSetupWizard() {
             <Button variant="ghost" onClick={() => setStep(3)} style={{ padding: "12px 14px" }}>
               Back
             </Button>
-            <Button
-              onClick={() => {
-                saveToProfile();
-                router.push("/jobs-for-you");
-              }}
-              style={{ padding: "12px 14px" }}
-            >
-              Finish & see jobs
-            </Button>
+            <div className="flex gap-2 flex-wrap justify-end">
+              <Button variant="ghost" onClick={resetPreferences} style={{ padding: "12px 14px" }}>
+                Reset
+              </Button>
+              <Button
+                onClick={() => {
+                  saveToProfile();
+                  router.push("/jobs-for-you");
+                }}
+                style={{ padding: "12px 14px" }}
+              >
+                Finish & see jobs
+              </Button>
+            </div>
           </div>
         </div>
       ) : null}
