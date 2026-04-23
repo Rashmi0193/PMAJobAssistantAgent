@@ -121,7 +121,7 @@ export function TopNav() {
 
           {auth.user ? (
             <>
-              <NavLink href="/profile-setup">Setup</NavLink>
+              <NavLink href="/profile-setup">Profile</NavLink>
               <Button
                 variant="ghost"
                 onClick={() => authActions.logout()}
@@ -148,7 +148,7 @@ export function TopNav() {
             onClick={toggleTheme}
             className="px-3 py-2 text-[13px]"
           >
-            {theme === "dark" ? "Light Mode" : "Dark Mode"}
+            {theme === "dark" ? "🔆" : "🔅"}
           </Button>
         </nav>
       </div>

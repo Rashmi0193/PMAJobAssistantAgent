@@ -22,11 +22,7 @@ export default function SignupPage() {
       <Card style={{ maxWidth: 520, margin: "0 auto" }}>
         <div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
           <h1 style={{ margin: 0, fontSize: 22, letterSpacing: -0.2 }}>Sign up</h1>
-          <Badge>UI-only</Badge>
         </div>
-        <p style={{ margin: "8px 0 0", color: "var(--muted)", lineHeight: 1.6 }}>
-          Demo page (no real authentication wired up in this assignment).
-        </p>
         <Divider />
         <div style={{ display: "grid", gap: 12 }}>
           <Field label="Name">

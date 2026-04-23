@@ -15,12 +15,22 @@ type Step = 1 | 2 | 3 | 4;
 
 const STEP_PERCENT: Record<Step, number> = { 1: 60, 2: 70, 3: 80, 4: 90 };
 
+const EXPERIENCE_LEVEL_PRESETS = [
+  "Entry Level & New Grad",
+  "Junior (1 to 2 years)",
+  "Mid-level (3 to 4 years)",
+  "Senior (5 to 8 years)",
+  "Expert & Leadership (9+ years)"
+];
+
 const INDUSTRY_PRESETS = [
   "Aerospace",
   "AI & Machine Learning",
   "Automotive & Transportation",
   "Biotechnology",
+  "Climate Tech / Sustainability",
   "Consulting",
+  "Construction & Infrastructure",
   "Consumer Goods",
   "Consumer Software",
   "Crypto & Web3",
@@ -39,12 +49,25 @@ const INDUSTRY_PRESETS = [
   "Government & Public Sector",
   "Hardware",
   "Healthcare",
+  "Hospitality & Tourism",
   "Industrial & Manufacturing",
   "Legal",
+  "Life Sciences",
+  "Logistics & Supply Chain",
+  "Marketing & Advertising",
+  "Media & Publishing",
+  "Medical Devices",
+  "Mining & Metals",
+  "Nonprofit / NGOs",
+  "Pharmaceuticals",
   "Quantitative Finance",
   "Real Estate",
+  "Retail & E-commerce",
   "Robotics & Automation",
   "Social Impact",
+  "Software & IT",
+  "Telecommunications",
+  "Utilities",
   "Venture Capital",
   "VR & AR"
 ];
@@ -105,61 +128,62 @@ export function ProfileSetupWizard() {
   const [salaryMinUsd, setSalaryMinUsd] = useState<number>(state.profile.salaryMinUsd ?? 0);
   const [salaryMaxUsd, setSalaryMaxUsd] = useState<number | undefined>(state.profile.salaryMaxUsd);
   const [industries, setIndustries] = useState<string[]>(state.profile.interests);
-  const [industriesAvoid, setIndustriesAvoid] = useState<string[]>(state.profile.interestsAvoid);
 
   const [skillSearch, setSkillSearch] = useState("");
   const [skillsSelected, setSkillsSelected] = useState<string[]>(state.profile.skills);
   const [skillsPreferred, setSkillsPreferred] = useState<string[]>(state.profile.skillsPreferred);
-  const [skillsAvoid, setSkillsAvoid] = useState<string[]>(state.profile.skillsAvoid);
-  const [skillsAvoidSearch, setSkillsAvoidSearch] = useState("");
 
   const [summary, setSummary] = useState(DEFAULT_SUMMARY);
 
   const canContinueStep1 = useMemo(() => targetRole.trim().length > 1, [targetRole]);
 
+  const [experienceLevels, setExperienceLevels] = useState<string[]>(
+    state.profile.experienceLevels ?? []
+  );
+
   const filteredSkills = useMemo(() => {
-    const q = skillSearch.trim().toLowerCase();
+    const q = skillSearch.trim();
     const base = [...new Set([...SKILL_PRESETS, ...skillsSelected])];
     if (!q) return base;
-    return base.filter((s) => s.toLowerCase().includes(q));
+  
+    const matches = base.filter((s) =>
+      s.toLowerCase().includes(q.toLowerCase())
+    );
+  
+    const exactExists = base.some(
+      (s) => s.toLowerCase() === q.toLowerCase()
+    );
+  
+    return exactExists ? matches : [q, ...matches];
   }, [skillSearch, skillsSelected]);
-
-  const filteredAvoidSkills = useMemo(() => {
-    const q = skillsAvoidSearch.trim().toLowerCase();
-    const base = [...new Set([...SKILL_PRESETS, ...skillsAvoid])];
-    if (!q) return base;
-    return base.filter((s) => s.toLowerCase().includes(q));
-  }, [skillsAvoid, skillsAvoidSearch]);
+  
 
   function toggleIndustryInclude(tag: string) {
     setIndustries((prev) => {
       const next = prev.includes(tag) ? prev.filter((t) => t !== tag) : [tag, ...prev];
       return next;
     });
-    setIndustriesAvoid((prev) => prev.filter((t) => t !== tag));
   }
 
-  function toggleIndustryAvoid(tag: string) {
-    setIndustriesAvoid((prev) => {
-      const next = prev.includes(tag) ? prev.filter((t) => t !== tag) : [tag, ...prev];
-      return next;
+  function toggleExperienceLevel(level: string) {
+    setExperienceLevels((prev) => {
+      if (prev.includes(level)) {
+        return prev.filter((item) => item !== level);
+      }
+  
+      if (prev.length >= 2) {
+        return prev;
+      }
+  
+      return [...prev, level];
     });
-    setIndustries((prev) => prev.filter((t) => t !== tag));
   }
 
   function toggleSkillSelected(skill: string) {
     setSkillsSelected((prev) =>
       prev.includes(skill) ? prev.filter((s) => s !== skill) : [...prev, skill]
     );
-    setSkillsAvoid((prev) => prev.filter((s) => s !== skill));
-  }
-
-  function toggleSkillAvoid(skill: string) {
-    setSkillsAvoid((prev) =>
-      prev.includes(skill) ? prev.filter((s) => s !== skill) : [...prev, skill]
-    );
-    setSkillsSelected((prev) => prev.filter((s) => s !== skill));
-    setSkillsPreferred((prev) => prev.filter((s) => s !== skill));
+    setSkillSearch("");
   }
 
   function toggleSkillPreferred(skill: string) {
@@ -190,56 +214,50 @@ export function ProfileSetupWizard() {
       salaryMinUsd: salaryMinUsd || undefined,
       salaryMaxUsd,
       interests: industries.slice(0, 20),
-      interestsAvoid: industriesAvoid.slice(0, 20),
       skills: skillsSelected.slice(0, 25),
       skillsPreferred: skillsPreferred.filter((s) => skillsSelected.includes(s)).slice(0, 10),
-      skillsAvoid: skillsAvoid.slice(0, 25)
+      experienceLevels: experienceLevels.slice(0, 2),
     });
     actions.notify("Profile setup saved locally.");
   }
 
   function resetPreferences() {
     const ok = window.confirm(
-      "Reset your preferences to the defaults? This will overwrite the preferences saved on this device."
+      "Clear all preferences? This will remove the preferences saved on this device."
     );
     if (!ok) return;
-
+  
     setStep(1);
-
-    setTargetRole(DEFAULT_PROFILE.targetRole);
-    setWorkMode(DEFAULT_PROFILE.workMode);
-    setDesiredJobTypes([...DEFAULT_PROFILE.desiredJobTypes]);
-    setLocationPreference(DEFAULT_PROFILE.locationPreference);
-    setPreferredLocations(DEFAULT_PROFILE.preferredLocations.join(", "));
-    setSalaryMinUsd(DEFAULT_PROFILE.salaryMinUsd ?? 0);
-    setSalaryMaxUsd(DEFAULT_PROFILE.salaryMaxUsd);
-    setIndustries([...DEFAULT_PROFILE.interests]);
-    setIndustriesAvoid([]);
-
+  
+    setTargetRole("");
+    setWorkMode("Open");
+    setDesiredJobTypes([]);
+    setLocationPreference("US");
+    setPreferredLocations("");
+    setSalaryMinUsd(0);
+    setSalaryMaxUsd(undefined);
+    setIndustries([]);
     setSkillSearch("");
-    setSkillsSelected([...DEFAULT_PROFILE.skills]);
-    setSkillsPreferred([...DEFAULT_PROFILE.skillsPreferred]);
-    setSkillsAvoid([]);
-    setSkillsAvoidSearch("");
-
-    setSummary(DEFAULT_SUMMARY);
-
+    setSkillsSelected([]);
+    setSkillsPreferred([]);
+    setSummary("");
+    setExperienceLevels([]);
+  
     actions.patchProfile({
-      targetRole: DEFAULT_PROFILE.targetRole,
-      workMode: DEFAULT_PROFILE.workMode,
-      desiredJobTypes: DEFAULT_PROFILE.desiredJobTypes,
-      locationPreference: DEFAULT_PROFILE.locationPreference,
-      preferredLocations: DEFAULT_PROFILE.preferredLocations,
-      salaryMinUsd: DEFAULT_PROFILE.salaryMinUsd,
-      salaryMaxUsd: DEFAULT_PROFILE.salaryMaxUsd,
-      interests: DEFAULT_PROFILE.interests,
+      targetRole: "",
+      workMode: "Open",
+      desiredJobTypes: [],
+      locationPreference: "US",
+      preferredLocations: [],
+      salaryMinUsd: undefined,
+      salaryMaxUsd: undefined,
+      interests: [],
       interestsAvoid: [],
-      skills: DEFAULT_PROFILE.skills,
-      skillsPreferred: DEFAULT_PROFILE.skillsPreferred,
-      skillsAvoid: []
+      skills: [],
+      skillsPreferred: [],
+      experienceLevels: [],
     });
-
-    actions.notify("Preferences reset.");
+    actions.notify("Preferences cleared.");
   }
 
   return (
@@ -302,100 +320,120 @@ export function ProfileSetupWizard() {
       <Divider />
 
       {step === 1 ? (
-        <div className="grid gap-12">
-          <div className="grid gap-12">
-            <Field label="Target role">
-              <Input value={targetRole} onChange={(e) => setTargetRole(e.target.value)} placeholder="Frontend Engineer" />
-            </Field>
+  <div className="grid gap-12">
 
-            <div className="grid gap-12 md:grid-cols-3">
-              <Field label="Work mode">
-                <select
-                  value={workMode}
-                  onChange={(e) => setWorkMode(e.target.value as any)}
-                  style={{
-                    width: "100%",
-                    padding: "10px 12px",
-                    borderRadius: 12,
-                    background: "var(--surface-2)",
-                    border: "1px solid var(--border-1)"
-                  }}
-                >
-                  <option value="Open">Open to all</option>
-                  <option value="Remote">Remote</option>
-                  <option value="Hybrid">Hybrid</option>
-                  <option value="Onsite">Onsite</option>
-                </select>
-              </Field>
+    <Field label="Target role">
+      <Input
+        value={targetRole}
+        onChange={(e) => setTargetRole(e.target.value)}
+        placeholder="Frontend Engineer"
+      />
+    </Field>
 
-              <Field label="Job type">
-                <div className="flex gap-2 flex-wrap">
-                  {(["Full-time", "Internship", "Contract"] as const).map((t) => (
-                    <button
-                      key={t}
-                      onClick={() => toggleJobType(t)}
-                      style={{
-                        padding: "8px 10px",
-                        borderRadius: 999,
-                        border: `1px solid ${desiredJobTypes.includes(t) ? "rgba(109,94,252,0.45)" : "var(--border-1)"}`,
-                        background: desiredJobTypes.includes(t) ? "rgba(109,94,252,0.10)" : "transparent",
-                        cursor: "pointer"
-                      }}
-                    >
-                      {t}
-                    </button>
-                  ))}
-                </div>
-              </Field>
+    <Field
+      label="Preferred locations (comma separated)"
+      hint='Examples: "SF Bay Area, New York, Remote (US)"'
+    >
+      <Input
+        value={preferredLocations}
+        onChange={(e) => setPreferredLocations(e.target.value)}
+        placeholder="SF Bay Area, Remote (US)"
+      />
+    </Field>
 
-              <Field label="Location scope">
-                <select
-                  value={locationPreference}
-                  onChange={(e) => setLocationPreference(e.target.value as any)}
-                  style={{
-                    width: "100%",
-                    padding: "10px 12px",
-                    borderRadius: 12,
-                    background: "var(--surface-2)",
-                    border: "1px solid var(--border-1)"
-                  }}
-                >
-                  <option value="US">All over the US</option>
-                  <option value="Worldwide">All over the world</option>
-                  <option value="Specific">Specific locations</option>
-                </select>
-              </Field>
-            </div>
+    <div className="grid gap-10 md:grid-cols-3 items-start">
 
-            <Field
-              label="Preferred locations (comma separated)"
-              hint='Examples: "SF Bay Area, New York, Remote (US)"'
+      <Section title="Work mode" subtitle="Choose how you want to work">
+        <div className="flex gap-2 flex-wrap">
+          {(["Open", "Remote", "Hybrid", "Onsite"] as const).map((mode) => (
+            <button
+              key={mode}
+              type="button"
+              onClick={() => setWorkMode(mode)}
+              style={chipStyle(workMode === mode)}
             >
-              <Input
-                value={preferredLocations}
-                onChange={(e) => setPreferredLocations(e.target.value)}
-                placeholder="SF Bay Area, Remote (US)"
-              />
-            </Field>
-          </div>
-
-          <div className="flex gap-2 flex-wrap justify-end">
-            <Button variant="ghost" onClick={resetPreferences} style={{ padding: "12px 14px" }}>
-              Reset
-            </Button>
-            <Button
-              disabled={!canContinueStep1}
-              onClick={() => {
-                saveToProfile();
-                setStep(2);
-              }}
-              style={{ padding: "12px 14px" }}
-            >
-              Continue
-            </Button>
-          </div>
+              {mode === "Open" ? "Open to all" : mode}
+            </button>
+          ))}
         </div>
-      ) : null}
+      </Section>
+
+      <Section title="Job type" subtitle="Select one or more">
+        <div className="flex gap-2 flex-wrap">
+          {(["Full-time", "Internship", "Contract"] as const).map((t) => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => toggleJobType(t)}
+              style={chipStyle(desiredJobTypes.includes(t))}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+      </Section>
+
+      <Section title="Experience level" subtitle="Select up to 2">
+        <div className="flex gap-2 flex-wrap">
+          {EXPERIENCE_LEVEL_PRESETS.map((level) => {
+            const selected = experienceLevels.includes(level);
+            const disabled = !selected && experienceLevels.length >= 2;
+
+            return (
+              <button
+                key={level}
+                type="button"
+                onClick={() => toggleExperienceLevel(level)}
+                disabled={disabled}
+                style={{
+                  ...chipStyle(selected),
+                  opacity: disabled ? 0.5 : 1,
+                  cursor: disabled ? "not-allowed" : "pointer"
+                }}
+              >
+                {level}
+              </button>
+            );
+          })}
+        </div>
+      </Section>
+    </div>
+
+    <Field label="Location scope">
+      <select
+        value={locationPreference}
+        onChange={(e) => setLocationPreference(e.target.value as any)}
+        style={{
+          width: "100%",
+          padding: "10px 12px",
+          borderRadius: 12,
+          background: "var(--surface-2)",
+          border: "1px solid var(--border-1)"
+        }}
+      >
+        <option value="US">All over the US</option>
+        <option value="Worldwide">All over the world</option>
+        <option value="Specific">Specific locations</option>
+      </select>
+    </Field>
+
+    <div className="flex gap-2 flex-wrap justify-end">
+      <Button variant="ghost" onClick={resetPreferences} style={{ padding: "12px 14px" }}>
+        Reset
+      </Button>
+      <Button
+        disabled={!canContinueStep1}
+        onClick={() => {
+          saveToProfile();
+          setStep(2);
+        }}
+        style={{ padding: "12px 14px" }}
+      >
+        Continue
+      </Button>
+    </div>
+  </div>
+) : null}
 
       {step === 2 ? (
         <div className="grid gap-12">
@@ -406,8 +444,6 @@ export function ProfileSetupWizard() {
           <div className="grid gap-12">
             <div className="grid gap-2">
               <div className="flex items-center gap-2 text-[14px] text-[color:var(--muted)]">
-                <span aria-hidden>✅</span>
-                <span>First, what industries are exciting to you?</span>
               </div>
               <div className="flex gap-2 flex-wrap">
                 {INDUSTRY_PRESETS.map((t) => (
@@ -421,25 +457,6 @@ export function ProfileSetupWizard() {
                 ))}
               </div>
             </div>
-
-            <Card style={{ boxShadow: "none", background: "var(--surface-2)" }}>
-              <div className="flex items-center gap-2 text-[14px] text-[color:var(--muted)]">
-                <span aria-hidden>⛔</span>
-                <span>Second, are there any industries you don’t want to work in?</span>
-              </div>
-              <div className="h-10" />
-              <div className="flex gap-2 flex-wrap">
-                {INDUSTRY_PRESETS.map((t) => (
-                  <button
-                    key={t}
-                    onClick={() => toggleIndustryAvoid(t)}
-                    style={chipStyle(industriesAvoid.includes(t))}
-                  >
-                    {t}
-                  </button>
-                ))}
-              </div>
-            </Card>
           </div>
 
           <div className="flex gap-2 flex-wrap justify-between">
@@ -550,32 +567,6 @@ export function ProfileSetupWizard() {
             </div>
           </div>
 
-          <Card style={{ boxShadow: "none", background: "var(--surface-2)" }}>
-            <div className="flex items-center gap-2 text-[14px] text-[color:var(--muted)]">
-              <span aria-hidden>⛔</span>
-              <span>Are there any skills you don’t want to work with?</span>
-            </div>
-            <div className="h-10" />
-            <Field label="Skills to filter out">
-              <Input
-                value={skillsAvoidSearch}
-                onChange={(e) => setSkillsAvoidSearch(e.target.value)}
-                placeholder="Search skills to filter out…"
-              />
-            </Field>
-            <div className="flex gap-2 flex-wrap">
-              {filteredAvoidSkills.slice(0, 28).map((s) => (
-                <button
-                  key={s}
-                  onClick={() => toggleSkillAvoid(s)}
-                  style={chipStyle(skillsAvoid.includes(s))}
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-          </Card>
-
           <div className="flex gap-2 flex-wrap justify-between">
             <Button variant="ghost" onClick={() => setStep(2)} style={{ padding: "12px 14px" }}>
               Back
@@ -607,71 +598,25 @@ export function ProfileSetupWizard() {
             </p>
           </div>
 
-          <div className="flex items-center justify-center">
-            <div
-              style={{
-                width: 190,
-                height: 190,
-                borderRadius: "50%",
-                border: "1px solid var(--border-1)",
-                background: "var(--surface-2)",
-                display: "grid",
-                placeItems: "center"
-              }}
-            >
-              <div className="text-center">
-                <div className="text-[13px] text-[color:var(--muted)]">At least</div>
-                <div className="text-[34px] font-extrabold tracking-[-0.6px]">
-                  {formatUsdCompact(salaryMinUsd)}
-                </div>
-                <div
-                  style={{
-                    margin: "6px auto 0",
-                    width: 46,
-                    padding: "4px 8px",
-                    borderRadius: 999,
-                    border: "1px solid var(--border-1)",
-                    background: "var(--surface-2)",
-                    fontSize: 12,
-                    color: "var(--muted)"
-                  }}
-                >
-                  USD
-                </div>
-              </div>
-            </div>
-          </div>
 
-          <div style={{ padding: "0 10px" }}>
-            <input
-              type="range"
-              min={0}
-              max={300000}
-              step={5000}
-              value={salaryMinUsd}
-              onChange={(e) => setSalaryMinUsd(Number(e.target.value))}
-              style={{ width: "100%" }}
+          <Field label="Minimum salary (USD)">
+            <Input
+              inputMode="numeric"
+              value={salaryMinUsd ? String(salaryMinUsd) : ""}
+              onChange={(e) => setSalaryMinUsd(e.target.value ? Number(e.target.value) : 0)}
+              placeholder="120000"
             />
-            <div className="flex justify-between text-[12px] text-[color:var(--faint)]">
-              <span>$0</span>
-              <span>$300k+</span>
-            </div>
-          </div>
+          </Field>
 
-          <div className="grid gap-12 md:grid-cols-2">
-            <Field label="Optional salary max (USD)">
-              <Input
-                inputMode="numeric"
-                value={salaryMaxUsd ? String(salaryMaxUsd) : ""}
-                onChange={(e) => setSalaryMaxUsd(e.target.value ? Number(e.target.value) : undefined)}
-                placeholder="180000"
-              />
-            </Field>
-            <Field label="Short summary (optional)" hint="Used for tailored answers.">
-              <Textarea rows={3} value={summary} onChange={(e) => setSummary(e.target.value)} />
-            </Field>
-          </div>
-
+          <Field label="Maximum salary (optional)">
+            <Input
+              inputMode="numeric"
+              value={salaryMaxUsd ? String(salaryMaxUsd) : ""}
+              onChange={(e) => setSalaryMaxUsd(e.target.value ? Number(e.target.value) : undefined)}
+              placeholder="180000"
+            />
+          </Field>
+      
           <Card style={{ boxShadow: "none", background: "var(--surface-2)" }}>
             <h3 className="m-0 text-[14px]">Preview</h3>
             <p className="mt-2 mb-0 text-[13px] leading-6 text-[color:var(--muted)]">

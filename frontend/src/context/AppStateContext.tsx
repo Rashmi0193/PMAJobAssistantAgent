@@ -24,7 +24,7 @@ export type Profile = {
   interests: string[];
   interestsAvoid: string[];
   skillsPreferred: string[];
-  skillsAvoid: string[];
+  experienceLevels: string[];
   desiredJobTypes: Array<"Full-time" | "Internship" | "Contract">;
   workMode: "Remote" | "Hybrid" | "Onsite" | "Open";
   locationPreference: "US" | "Worldwide" | "Specific";
@@ -129,11 +129,11 @@ export const DEFAULT_PROFILE: Profile = {
   yearsExperience: 3,
   seniority: "Mid",
   tone: "Warm",
+  experienceLevels:[],
   skills: ["React", "TypeScript", "Next.js"],
   interests: ["Startups", "Product teams"],
   interestsAvoid: [],
   skillsPreferred: ["React"],
-  skillsAvoid: [],
   desiredJobTypes: ["Full-time"],
   workMode: "Open",
   locationPreference: "US",
