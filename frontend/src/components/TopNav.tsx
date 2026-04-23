@@ -9,13 +9,14 @@ import { useAuth } from "@/context/AuthContext";
 function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
   const pathname = usePathname();
   const active = pathname === href;
+
   return (
     <Link
       href={href}
       className={[
         "rounded-xl px-3 py-2 text-[14px] font-semibold transition-colors",
         active ? "bg-[color:var(--surface-2)]" : "hover:bg-[color:var(--surface-2)]",
-        "text-[color:var(--muted)] hover:text-[color:var(--text)]"
+        "text-[color:var(--muted)] hover:text-[color:var(--text)]",
       ].join(" ")}
     >
       {children}
@@ -32,22 +33,33 @@ export function TopNav() {
       const saved = window.localStorage.getItem("theme");
       const initial = saved === "dark" ? "dark" : "light";
       setTheme(initial);
-      document.documentElement.dataset.theme = initial;
+
+      if (initial === "dark") {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
     } catch {
       // ignore
     }
   }, []);
 
-  function toggleTheme() {
-    const next = theme === "dark" ? "light" : "dark";
-    setTheme(next);
-    document.documentElement.dataset.theme = next;
+  const toggleTheme = () => {
+    const nextTheme = theme === "dark" ? "light" : "dark";
+    setTheme(nextTheme);
+
     try {
-      window.localStorage.setItem("theme", next);
+      window.localStorage.setItem("theme", nextTheme);
+
+      if (nextTheme === "dark") {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
     } catch {
       // ignore
     }
-  }
+  };
 
   return (
     <header
@@ -57,7 +69,7 @@ export function TopNav() {
         zIndex: 20,
         backdropFilter: "blur(14px)",
         background: "linear-gradient(to bottom, var(--nav-bg), rgba(0,0,0,0))",
-        borderBottom: "1px solid var(--nav-border)"
+        borderBottom: "1px solid var(--nav-border)",
       }}
     >
       <div
@@ -67,7 +79,7 @@ export function TopNav() {
           paddingBottom: 12,
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "center"
+          alignItems: "center",
         }}
       >
         <Link href="/" className="flex items-center gap-3">
@@ -75,23 +87,27 @@ export function TopNav() {
             aria-hidden
             className="h-8 w-8 rounded-xl shadow-[0_12px_30px_rgba(109,94,252,0.22)]"
             style={{
-              background: "linear-gradient(135deg, var(--brand), var(--brand-2))"
+              background: "linear-gradient(135deg, var(--brand), var(--brand-2))",
             }}
           />
-          <span className="font-extrabold tracking-[-0.3px]">Job Assistant</span>
+          <span className="font-extrabold tracking-[-0.3px] text-[color:var(--text)]">
+            Job Assistant
+          </span>
         </Link>
+
         <nav
           style={{
             display: "flex",
             gap: 14,
             alignItems: "center",
             flexWrap: "wrap",
-            justifyContent: "flex-end"
+            justifyContent: "flex-end",
           }}
         >
           <NavLink href="/copilot">Copilot</NavLink>
           <NavLink href="/employers">Employers</NavLink>
           <NavLink href="/latest-jobs">Jobs</NavLink>
+
           {auth.user ? (
             <>
               <span aria-hidden style={{ width: 1, height: 18, background: "var(--border-2)" }} />
@@ -100,11 +116,17 @@ export function TopNav() {
               <NavLink href="/resume-builder">Resume Builder</NavLink>
             </>
           ) : null}
+
           <span aria-hidden style={{ width: 1, height: 18, background: "var(--border-2)" }} />
+
           {auth.user ? (
             <>
               <NavLink href="/profile-setup">Setup</NavLink>
-              <Button variant="ghost" onClick={() => authActions.logout()} className="px-3 py-2 text-[13px]">
+              <Button
+                variant="ghost"
+                onClick={() => authActions.logout()}
+                className="px-3 py-2 text-[13px]"
+              >
                 Log out
               </Button>
             </>
@@ -120,8 +142,13 @@ export function TopNav() {
               </Link>
             </>
           )}
-          <Button variant="ghost" onClick={toggleTheme} className="px-3 py-2 text-[13px]">
-            {theme === "dark" ? "Light" : "Dark"}
+
+          <Button
+            variant="ghost"
+            onClick={toggleTheme}
+            className="px-3 py-2 text-[13px]"
+          >
+            {theme === "dark" ? "Light Mode" : "Dark Mode"}
           </Button>
         </nav>
       </div>
