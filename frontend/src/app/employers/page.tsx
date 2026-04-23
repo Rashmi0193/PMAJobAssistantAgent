@@ -5,6 +5,7 @@ import { Divider } from "@/components/ui/Divider";
 import { Badge } from "@/components/ui/Badge";
 
 export default function EmployersPage() {
+  
   const features = [
     {
       title: "Smarter applicant review",
