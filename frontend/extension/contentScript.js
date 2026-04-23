@@ -33,7 +33,7 @@ function guessKind(el) {
 }
 
 function cssEscape(v) {
-  return CSS.escape(v);
+  return window.CSS && CSS.escape ? CSS.escape(v) : String(v).replace(/[^a-zA-Z0-9_-]/g, "\\$&");
 }
 
 function selectorFor(el) {

@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "AI Job Assistant Copilot (Demo)",
   "version": "0.1.0",
-  "description": "Frontend-only demo: store profile, preview/approve autofill, capture job context, and show mock scoring/answers.",
+  "description": "AI job application copilot for profile storage, job context capture, preview-first autofill, and mock resume scoring/answers.",
   "permissions": ["storage", "activeTab", "scripting", "sidePanel", "tabs"],
   "host_permissions": ["http://*/*", "https://*/*"],
   "action": {
