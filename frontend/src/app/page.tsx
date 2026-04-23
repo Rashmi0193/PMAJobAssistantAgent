@@ -128,7 +128,7 @@ export default function HomePage() {
   ];
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50 text-slate-900 dark:from-[#03101d] dark:via-[#07111f] dark:to-[#071827] dark:text-white">
+    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50 text-slate-900 dark:from-[#03101d] dark:via-[#07111f] dark:to-[#071827] dark:text-white">
       {/* HERO */}
       <motion.section
         className="px-6 py-20 md:px-10 md:py-28"
@@ -136,17 +136,22 @@ export default function HomePage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
       >
-        <div className="mx-auto max-w-6xl text-center">
-          <div className="flex flex-wrap justify-center gap-2">
-            <Badge>Smart job matching</Badge>
-            <Badge>Resume scoring</Badge>
-            <Badge>Autofill with control</Badge>
-            <Badge>Application tracking</Badge>
+        <div className="mx-auto max-w-6xl text-center ">
+          <div className="flex flex-wrap justify-center gap-4 ">
+          <Badge className="bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300">
+Smart job matching</Badge>
+<Badge className="bg-indigo-100 text-indigo-700
+dark:bg-indigo-500/20 dark:text-indigo-300">
+Resume scoring</Badge>
+<Badge className="bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300">
+Autofill with control</Badge>
+<Badge className="bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300">
+Application tracking</Badge>
           </div>
 
           <h1 className="mx-auto mt-8 max-w-4xl text-[44px] font-extrabold leading-[1.02] tracking-[-2px] text-slate-900 md:text-[72px] dark:text-white">
             Your job search,
-            <span className="block text-cyan-600 dark:text-cyan-300">
+            <span className="block text-indigo-600 dark:text-indigo-300">
               finally under control.
             </span>
           </h1>
@@ -250,7 +255,7 @@ export default function HomePage() {
                 viewport={{ once: true }}
                 className="rounded-[24px] border border-slate-200 bg-white p-6 dark:border-white/10 dark:bg-black/10"
               >
-                <div className="text-[12px] font-semibold uppercase tracking-[0.2em] text-cyan-600 dark:text-cyan-300">
+                <div className="text-[12px] font-semibold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-300">
                   Step {item.step}
                 </div>
                 <h3 className="mt-3 text-[20px] font-bold text-slate-900 dark:text-white">
@@ -273,7 +278,7 @@ export default function HomePage() {
         viewport={{ once: true }}
         transition={{ duration: 0.65 }}
       >
-        <div className="mx-auto max-w-5xl rounded-[32px] bg-gradient-to-r from-cyan-600 to-sky-500 px-8 py-14 text-center text-white shadow-lg">
+        <div className="mx-auto max-w-5xl rounded-[32px] bg-gradient-to-r from-indigo-600 to-sky-500 px-8 py-14 text-center text-white shadow-lg">
           <h2 className="text-[32px] font-extrabold tracking-[-1px] md:text-[40px]">
             Ready to simplify your job search?
           </h2>

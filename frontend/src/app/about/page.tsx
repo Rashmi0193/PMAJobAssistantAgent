@@ -13,7 +13,7 @@ export default function AboutPage() {
         </p>
         <Divider />
         <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.7 }}>
-          This project is built as a web app (extension-ready UI). Backend intelligence and real scraping/autofill are intentionally mocked for the assignment phase.
+          This project is built as a web app (extension-ready UI). 
         </p>
       </Card>
     </main>

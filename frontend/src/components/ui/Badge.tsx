@@ -2,31 +2,27 @@
 
 export function Badge({
   children,
-  tone = "neutral"
+  tone = "neutral",
+  className = ""
 }: {
   children: React.ReactNode;
   tone?: "neutral" | "ok" | "warn" | "danger";
+  className?: string;
 }) {
-  const colorByTone: Record<string, { bg: string; border: string }> = {
-    neutral: { bg: "var(--surface-2)", border: "var(--border-1)" },
-    ok: { bg: "rgba(46,196,182,0.14)", border: "rgba(46,196,182,0.28)" },
-    warn: { bg: "rgba(245,158,11,0.14)", border: "rgba(245,158,11,0.28)" },
-    danger: { bg: "rgba(225,29,72,0.14)", border: "rgba(225,29,72,0.28)" }
+  const toneClasses = {
+    neutral:
+      "bg-[color:var(--surface-2)] border-[color:var(--border-1)] text-slate-700 dark:text-slate-200",
+    ok:
+      "bg-indigo-100 border-indigo-200 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300 dark:border-indigo-500/30",
+    warn:
+      "bg-amber-100 border-amber-200 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/30",
+    danger:
+      "bg-rose-100 border-rose-200 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300 dark:border-rose-500/30"
   };
-  const c = colorByTone[tone];
+
   return (
     <span
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        gap: 6,
-        padding: "5px 8px",
-        borderRadius: 999,
-        background: c.bg,
-        border: `1px solid ${c.border}`,
-        fontSize: 12,
-        color: "var(--text)"
-      }}
+      className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs border ${toneClasses[tone]} ${className}`}
     >
       {children}
     </span>
