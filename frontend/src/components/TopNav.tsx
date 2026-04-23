@@ -91,7 +91,6 @@ export function TopNav() {
         >
           <NavLink href="/copilot">Copilot</NavLink>
           <NavLink href="/employers">Employers</NavLink>
-          <NavLink href="/blog">Blog</NavLink>
           <NavLink href="/latest-jobs">Jobs</NavLink>
           {auth.user ? (
             <>

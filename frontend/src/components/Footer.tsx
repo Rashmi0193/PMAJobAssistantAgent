@@ -25,7 +25,6 @@ export function Footer() {
           <Link href="/latest-jobs">Latest Jobs</Link>
           <Link href="/remote">Remote Work</Link>
           <Link href="/internships">Internships</Link>
-          <Link href="/blog">Blog</Link>
           <Link href="/about">About</Link>
         </div>
       </div>
