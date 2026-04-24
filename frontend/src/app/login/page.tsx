@@ -8,7 +8,6 @@ import { Divider } from "@/components/ui/Divider";
 import { Field } from "@/components/ui/Field";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
 import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
@@ -24,18 +23,19 @@ export default function LoginPage() {
         </div>
         <Divider />
         <div style={{ display: "grid", gap: 12 }}>
-          <Field label="Email">
+        <Field label="Email">
             <Input
+              type="email"
               placeholder="you@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </Field>
           <Field label="Password">
-            <Input type="password" placeholder="••••••••" />
+            <Input type="password" placeholder="Demo password" />
           </Field>
           <Button
-            disabled={email.trim().length < 4}
+            disabled={!email.includes("@")}
             onClick={() => {
               actions.login({ email });
               router.push("/profile-setup");
@@ -43,6 +43,9 @@ export default function LoginPage() {
           >
             Log in
           </Button>
+          <div style={{ color: "var(--muted)", fontSize: 13 }}>
+            Demo login stores your session locally for this prototype.
+          </div>
           <div style={{ color: "var(--muted)", fontSize: 13 }}>
             New here? <Link href="/signup">Create an account</Link>
           </div>
