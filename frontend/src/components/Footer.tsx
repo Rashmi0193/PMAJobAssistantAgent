@@ -20,7 +20,7 @@ export function Footer() {
         <div>AI-Powered Job Application Assistant</div>
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
           <Link href="/job-tracker">Job Tracker</Link>
-          <Link href="/resume-builder">Resume Builder</Link>
+          <Link href="/resume-parser">Resume Parser</Link>
           <Link href="/resume-score">Resume Review</Link>
           <Link href="/latest-jobs">Latest Jobs</Link>
           <Link href="/remote">Remote Work</Link>
