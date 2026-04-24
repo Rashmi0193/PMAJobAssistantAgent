@@ -113,7 +113,7 @@ export function TopNav() {
               <span aria-hidden style={{ width: 1, height: 18, background: "var(--border-2)" }} />
               <NavLink href="/jobs-for-you">Jobs for you</NavLink>
               <NavLink href="/job-tracker">Job Tracker</NavLink>
-              <NavLink href="/resume-builder">Resume Builder</NavLink>
+              <NavLink href="/resume-parser">Resume Parser</NavLink>
             </>
           ) : null}
 
