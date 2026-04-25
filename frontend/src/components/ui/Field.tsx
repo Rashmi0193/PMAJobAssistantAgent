@@ -1,22 +1,32 @@
-"use client";
+import { ReactNode } from "react";
 
 export function Field({
   label,
   hint,
-  children
+  children,
+  id,
 }: {
   label: string;
   hint?: string;
-  children: React.ReactNode;
+  children: ReactNode;
+  id?: string;
 }) {
   return (
-    <label style={{ display: "grid", gap: 6 }}>
-      <span style={{ fontSize: 13, color: "var(--muted)" }}>{label}</span>
+    <div className="grid gap-1.5">
+      <label
+        htmlFor={id}
+        className="text-[13px] text-[color:var(--muted)]"
+      >
+        {label}
+      </label>
+
       {children}
-      {hint ? (
-        <span style={{ fontSize: 12, color: "var(--faint)" }}>{hint}</span>
-      ) : null}
-    </label>
+
+      {hint && (
+        <p className="text-[12px] text-[color:var(--faint)]">
+          {hint}
+        </p>
+      )}
+    </div>
   );
 }
-

@@ -1,4 +1,3 @@
-"use client";
 
 export function Badge({
   children,
@@ -13,7 +12,7 @@ export function Badge({
     neutral:
       "bg-[color:var(--surface-2)] border-[color:var(--border-1)] text-slate-700 dark:text-slate-200",
     ok:
-      "bg-indigo-100 border-indigo-200 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300 dark:border-indigo-500/30",
+    "bg-green-100 border-green-200 text-green-700 dark:bg-green-500/20 dark:text-green-300 dark:border-green-500/30",
     warn:
       "bg-amber-100 border-amber-200 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/30",
     danger:

@@ -45,10 +45,9 @@ export function AssistantShell() {
         <Card style={{ boxShadow: "none" }}>
           <div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
             <div>
-              <h1 style={{ margin: 0, fontSize: 22, letterSpacing: -0.2 }}>Assistant (job page mode)</h1>
+              <h1 style={{ margin: 0, fontSize: 22, letterSpacing: -0.2 }}>Application Assistant</h1>
               <p style={{ margin: "8px 0 0", color: "var(--muted)", lineHeight: 1.5 }}>
-                This simulates a sidebar/popup that activates on a job page. Agents run tasks and ask for review.
-              </p>
+              Use AI to analyze job descriptions, generate tailored responses, and prepare your application efficiently.              </p>
             </div>
             <Badge tone={jobLooksValid ? "ok" : "warn"}>{jobLooksValid ? "Job context ready" : "Add job context"}</Badge>
           </div>
@@ -82,16 +81,15 @@ export function AssistantShell() {
               variant="ghost"
               disabled={!jobUrl.trim()}
               onClick={() => actions.scrapeJobFromUrl(jobUrl.trim())}
-              title="Mock tool: demonstrates the 'scrape job URL' pattern"
-            >
-              Scrape from URL (mock)
+              title="Extract job details from the provided URL"
+              >
             </Button>
           </div>
 
           <Divider style={{ marginTop: 16 }} />
 
           <Field
-            label="Resume snippet (quick scoring)"
+            label="Resume snippet"
             hint="Use the Resume Score page for the full analyzer UI."
           >
             <Textarea
@@ -122,9 +120,10 @@ export function AssistantShell() {
               Autofill {showAutofill ? "▲" : "▼"}
             </Button>
           </div>
-          <p style={{ margin: "10px 0 0", color: "var(--faint)", lineHeight: 1.5, fontSize: 12 }}>
-            Note: This phase focuses on UX and static components. Autofill is represented as a future action with preview/approval.
-          </p>
+          <p className="mt-3 text-[12px] text-[color:var(--faint)] leading-6">
+  Autofill suggestions are generated based on your profile and job context.
+  Review and approve before applying.
+</p>
         </Card>
 
         {showAutofill ? (
@@ -147,7 +146,7 @@ export function AssistantShell() {
         <GeneratedAnswer />
 
         <Card style={{ boxShadow: "none" }}>
-          <h3 style={{ margin: 0, fontSize: 14 }}>Feedback log (latest)</h3>
+          <h3 style={{ margin: 0, fontSize: 14 }}>Recent Feedback</h3>
           <p style={{ margin: "8px 0 0", color: "var(--muted)", lineHeight: 1.5 }}>
             A simple feedback loop: every output can be rated 👍/👎 with an optional note.
           </p>

@@ -131,24 +131,24 @@ export default function HomePage() {
     <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50 text-slate-900 dark:from-[#03101d] dark:via-[#07111f] dark:to-[#071827] dark:text-white">
       {/* HERO */}
       <motion.section
-        className="px-6 py-20 md:px-10 md:py-28"
+        className="px-6 py-16 md:px-10 md:py-24"
         initial={{ opacity: 0, y: 36 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
       >
-        <div className="mx-auto max-w-6xl text-center ">
-          <div className="flex flex-wrap justify-center gap-4 ">
-          <Badge className="bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300">
-Smart job matching</Badge>
-<Badge className="bg-indigo-100 text-indigo-700
-dark:bg-indigo-500/20 dark:text-indigo-300">
-Resume scoring</Badge>
-<Badge className="bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300">
-Autofill with control</Badge>
-<Badge className="bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300">
-Application tracking</Badge>
+        <div className="mx-auto max-w-6xl text-center">
+          <div className="flex flex-wrap justify-center gap-4">
+            {["Smart job matching", "Resume scoring", "Autofill with control", "Application tracking"].map(
+              (label) => (
+                <Badge
+                  key={label}
+                  className="bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300"
+                >
+                  {label}
+                </Badge>
+              )
+            )}
           </div>
-
           <h1 className="mx-auto mt-8 max-w-4xl text-[44px] font-extrabold leading-[1.02] tracking-[-2px] text-slate-900 md:text-[72px] dark:text-white">
             Your job search,
             <span className="block text-indigo-600 dark:text-indigo-300">

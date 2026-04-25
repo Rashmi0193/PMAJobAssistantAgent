@@ -27,6 +27,7 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
 export function TopNav() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const { state: auth, actions: authActions } = useAuth();
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -43,6 +44,20 @@ export function TopNav() {
       // ignore
     }
   }, []);
+
+  useEffect(() => {
+    function handleClickOutside() {
+      setOpen(false);
+    }
+  
+    if (open) {
+      document.addEventListener("click", handleClickOutside);
+    }
+  
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [open]);
 
   const toggleTheme = () => {
     const nextTheme = theme === "dark" ? "light" : "dark";
@@ -91,7 +106,7 @@ export function TopNav() {
             }}
           />
           <span className="font-extrabold tracking-[-0.3px] text-[color:var(--text)]">
-            Job Assistant
+            Job Assistant Agent
           </span>
         </Link>
 
@@ -105,7 +120,7 @@ export function TopNav() {
           }}
         >
           <NavLink href="/copilot">Copilot</NavLink>
-          <NavLink href="/employers">Employers</NavLink>
+          {!auth.user && <NavLink href="/employers">For Employers</NavLink>}
           <NavLink href="/latest-jobs">Jobs</NavLink>
 
           {auth.user ? (
@@ -118,20 +133,65 @@ export function TopNav() {
           ) : null}
 
           <span aria-hidden style={{ width: 1, height: 18, background: "var(--border-2)" }} />
-
           {auth.user ? (
-            <>
-              <NavLink href="/profile-setup">Profile</NavLink>
-              <Button
-                variant="ghost"
-                onClick={() => authActions.logout()}
-                className="px-3 py-2 text-[13px]"
-              >
-                Log out
-              </Button>
-            </>
-          ) : (
-            <>
+  <div style={{ position: "relative" }}
+  onClick={(e) => e.stopPropagation()}
+>
+    <Button
+      variant="ghost"
+      onClick={() => setOpen((prev) => !prev)}
+      className="px-3 py-2 text-[13px]"
+    >
+      Profile ▾
+    </Button>
+
+    {open && (
+      <div
+        style={{
+          position: "absolute",
+          right: 0,
+          top: "110%",
+          background: "var(--surface-1)",
+          border: "1px solid var(--border-1)",
+          borderRadius: 12,
+          padding: 8,
+          minWidth: 160,
+          boxShadow: "var(--shadow-soft)",
+          zIndex: 50,
+        }}
+      >
+        <Link href="/dashboard">
+          <div
+            className="px-3 py-2 rounded-lg hover:bg-[color:var(--surface-2)] cursor-pointer text-[14px]"
+            onClick={() => setOpen(false)}
+          >
+            Dashboard
+          </div>
+        </Link>
+
+        <Link href="/profile-setup">
+          <div
+            className="px-3 py-2 rounded-lg hover:bg-[color:var(--surface-2)] cursor-pointer text-[14px]"
+            onClick={() => setOpen(false)}
+          >
+            Profile
+          </div>
+        </Link>
+
+        <div
+          className="px-3 py-2 rounded-lg hover:bg-[color:var(--surface-2)] cursor-pointer text-[14px]"
+          onClick={() => {
+            setOpen(false);
+            authActions.logout();
+          }}
+        >
+          Log out
+        </div>
+      </div>
+    )}
+  </div>
+) : (
+              <>
               <Link href="/login">
                 <Button variant="ghost" className="px-3 py-2 text-[13px]">
                   Log in

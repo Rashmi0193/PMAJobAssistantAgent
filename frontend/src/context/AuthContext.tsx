@@ -4,14 +4,16 @@ import React, { createContext, useContext, useEffect, useMemo, useReducer, useRe
 
 type AuthUser = {
   id: string;
-  name: string;
+  name?: string;
   email: string;
   createdAt: string;
+  skills?: string[];
 };
 
 type AuthState = {
   user?: AuthUser;
   ready: boolean;
+  name?: string;
 };
 
 type Action =
@@ -44,7 +46,7 @@ function newId(prefix: string) {
 
 type AuthActions = {
   signup: (input: { name: string; email: string }) => void;
-  login: (input: { email: string }) => void;
+  login: (input: { email: string; name?: string; skills?: string[] }) => void;
   logout: () => void;
 };
 
@@ -92,12 +94,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         };
         dispatch({ type: "login", user });
       },
-      login: ({ email }) => {
+      login: ({ email, name, skills }) => {
         const user: AuthUser = {
           id: newId("user"),
-          name: "User",
+          name: name?.trim() || "User",
           email: email.trim(),
-          createdAt: nowIso()
+          createdAt: nowIso(),
+          skills: skills || []
         };
         dispatch({ type: "login", user });
       },

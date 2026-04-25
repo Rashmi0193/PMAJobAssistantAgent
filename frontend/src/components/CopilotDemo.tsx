@@ -13,32 +13,6 @@ import { AutofillAgentPanel } from "@/components/AutofillAgentPanel";
 
 type Tab = "Autofill" | "Answers" | "Score" | "Tracker";
 
-function TabButton({
-  active,
-  children,
-  onClick
-}: {
-  active: boolean;
-  children: React.ReactNode;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      style={{
-        padding: "8px 10px",
-        borderRadius: 999,
-        border: `1px solid ${active ? "rgba(109,94,252,0.45)" : "var(--border-1)"}`,
-        background: active ? "rgba(109,94,252,0.12)" : "transparent",
-        color: "var(--text)",
-        cursor: "pointer"
-      }}
-    >
-      {children}
-    </button>
-  );
-}
-
 export function CopilotDemo() {
   const { state, actions } = useAppState();
   const [tab, setTab] = useState<Tab>("Autofill");
@@ -67,207 +41,248 @@ export function CopilotDemo() {
   }, [jobUrl]);
 
   return (
-    <div style={{ display: "grid", gap: 16 }}>
-      <Card
+    <div
+  style={{
+    display: "grid",
+    gridTemplateColumns: "minmax(0, 1fr) 390px",
+    gap: 16,
+    alignItems: "start"
+  }}
+>
+  {/* Fake browser/job page */}
+  <Card
+    style={{
+      minHeight: 720,
+      boxShadow: "none",
+      padding: 0,
+      overflow: "hidden"
+    }}
+  >
+    <div
+      style={{
+        padding: "10px 14px",
+        borderBottom: "1px solid var(--border-1)",
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+        background: "var(--surface-2)"
+      }}
+    >
+      <span>🔴</span>
+      <span>🟡</span>
+      <span>🟢</span>
+      <div
         style={{
-          padding: 18,
-          background:
-            "linear-gradient(180deg, rgba(109,94,252,0.12), rgba(46,196,182,0.06))"
+          marginLeft: 10,
+          flex: 1,
+          padding: "8px 12px",
+          borderRadius: 999,
+          background: "var(--surface-1)",
+          border: "1px solid var(--border-1)",
+          color: "var(--muted)",
+          fontSize: 13
         }}
       >
-        <div style={{ display: "flex", justifyContent: "space-between", gap: 14, flexWrap: "wrap" }}>
-          <div style={{ maxWidth: 760 }}>
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 10 }}>
-              <Badge>Copilot demo</Badge>
-              <Badge>Sidebar UX</Badge>
-              <Badge>Preview-first</Badge>
-            </div>
-            <h1 style={{ margin: 0, fontSize: 34, letterSpacing: -0.6 }}>
-              Your AI copilot for job applications
-            </h1>
-            <p style={{ marginTop: 10, color: "var(--muted)", lineHeight: 1.6 }}>
-              This page simulates a browser-extension sidebar: you keep the job page open while the copilot drafts answers,
-              previews autofill values, and helps you tailor your application.
-            </p>
-            <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 14 }}>
-              <Button onClick={() => actions.notify("Extension install is out of scope for Phase 2; this is the UI demo.")}>
-                Install extension (demo)
-              </Button>
-              <Button variant="secondary" onClick={() => actions.notify("Tip: fill out Profile for best results.")}>
-                How it works
-              </Button>
-            </div>
-          </div>
-          <Card style={{ boxShadow: "none", background: "rgba(0,0,0,0.03)", minWidth: 280 }}>
-            <h2 style={{ margin: 0, fontSize: 14 }}>Quick setup</h2>
-            <p style={{ margin: "8px 0 0", color: "var(--muted)", lineHeight: 1.5 }}>
-              Add a job URL (optional), paste the JD, then run agents in the sidebar.
-            </p>
-            <Divider />
-            <div style={{ display: "grid", gap: 8, color: "var(--muted)", fontSize: 13 }}>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span>Job context</span>
-                <span style={{ color: "var(--text)" }}>{jobLooksValid ? "Ready" : "Incomplete"}</span>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span>Profile</span>
-                <span style={{ color: "var(--text)" }}>{state.profile.email.trim() ? "Saved locally" : "Needs email"}</span>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span>Tasks run</span>
-                <span style={{ color: "var(--text)" }}>{state.tasks.length}</span>
-              </div>
-            </div>
-          </Card>
-        </div>
-      </Card>
+        {jobUrl || "https://company.com/careers/frontend-engineer"}
+      </div>
+    </div>
 
+    <div style={{ padding: 22, display: "grid", gap: 16 }}>
+      <Badge>{host}</Badge>
+
+      <div>
+        <h2 style={{ margin: 0, fontSize: 28 }}>{jobTitle || "Frontend Engineer"}</h2>
+        <p style={{ margin: "8px 0 0", color: "var(--muted)" }}>
+          {company || "Company name"}
+        </p>
+      </div>
+
+      <Divider />
+
+      <Field label="Job posting URL">
+        <Input
+          value={jobUrl}
+          onChange={(e) => setJobUrl(e.target.value)}
+          placeholder="https://…"
+        />
+      </Field>
+
+      <div style={{ display: "grid", gap: 10, gridTemplateColumns: "1fr 1fr" }}>
+        <Field label="Job title">
+          <Input value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} />
+        </Field>
+
+        <Field label="Company">
+          <Input value={company} onChange={(e) => setCompany(e.target.value)} />
+        </Field>
+      </div>
+
+      <Field label="Job description">
+        <Textarea
+          rows={14}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+      </Field>
+
+      <div style={{ display: "flex", gap: 10 }}>
+        <Button
+          variant="secondary"
+          disabled={!jobLooksValid && description.trim().length < 10}
+          onClick={() =>
+            actions.setJob({
+              title: jobTitle,
+              company,
+              description,
+              url: jobUrl.trim() || undefined
+            })
+          }
+        >
+          Save job context
+        </Button>
+
+        <Button
+          variant="ghost"
+          disabled={!jobUrl.trim()}
+          onClick={() => actions.scrapeJobFromUrl(jobUrl.trim())}
+        >
+          Scrape URL
+        </Button>
+      </div>
+    </div>
+  </Card>
+
+  {/* Extension sidebar */}
+  <aside
+    style={{
+      position: "sticky",
+      top: 16,
+      height: "calc(100vh - 32px)",
+      display: "grid"
+    }}
+  >
+    <Card
+      style={{
+        boxShadow: "var(--shadow)",
+        height: "100%",
+        overflow: "hidden",
+        padding: 0,
+        display: "flex",
+        flexDirection: "column"
+      }}
+    >
       <div
-        className="copilotGrid"
+        style={{
+          padding: 14,
+          borderBottom: "1px solid var(--border-1)",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center"
+        }}
       >
-        <div style={{ display: "grid", gap: 16 }}>
-          <Card style={{ boxShadow: "none" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
-              <div>
-                <h2 style={{ margin: 0, fontSize: 16 }}>Job page (preview)</h2>
-                <p style={{ margin: "6px 0 0", color: "var(--muted)", lineHeight: 1.5 }}>
-                  In a real extension, this is the website you’re applying on.
-                </p>
-              </div>
-              <Badge>{host}</Badge>
-            </div>
-            <Divider />
-            <div style={{ display: "grid", gap: 10 }}>
-              <Field label="Job posting URL (optional)">
-                <Input value={jobUrl} onChange={(e) => setJobUrl(e.target.value)} placeholder="https://…" />
-              </Field>
-              <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                <Button
-                  variant="ghost"
-                  disabled={!jobUrl.trim()}
-                  onClick={() => actions.scrapeJobFromUrl(jobUrl.trim())}
-                  title="Mock tool: demonstrates 'scrape job URL' pattern"
-                >
-                  Scrape from URL (mock)
-                </Button>
-                <Button
-                  variant="secondary"
-                  disabled={!jobLooksValid && description.trim().length < 10}
-                  onClick={() => actions.setJob({ title: jobTitle, company, description, url: jobUrl.trim() || undefined })}
-                >
-                  Save job context
-                </Button>
-              </div>
-              <div style={{ display: "grid", gap: 10, gridTemplateColumns: "1fr 1fr" }}>
-                <Field label="Job title">
-                  <Input value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} />
-                </Field>
-                <Field label="Company">
-                  <Input value={company} onChange={(e) => setCompany(e.target.value)} />
-                </Field>
-              </div>
-              <Field label="Job description">
-                <Textarea rows={10} value={description} onChange={(e) => setDescription(e.target.value)} />
-              </Field>
-            </div>
-          </Card>
+        <div>
+          <h2 style={{ margin: 0, fontSize: 16 }}>Copilot</h2>
+          <p style={{ margin: "4px 0 0", fontSize: 12, color: "var(--muted)" }}>
+            Preview before applying
+          </p>
         </div>
+        <Badge>{jobLooksValid ? "Ready" : "Needs JD"}</Badge>
+      </div>
 
-        <div style={{ display: "grid", gap: 16 }}>
-          <Card style={{ boxShadow: "none" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
-              <div>
-                <h2 style={{ margin: 0, fontSize: 16 }}>Copilot sidebar</h2>
-                <p style={{ margin: "6px 0 0", color: "var(--muted)", lineHeight: 1.5 }}>
-                  Switch between actions. Everything is previewable and user-approved.
-                </p>
-              </div>
-              <Badge>Agent actions</Badge>
-            </div>
-            <Divider />
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              <TabButton active={tab === "Autofill"} onClick={() => setTab("Autofill")}>
-                Autofill
-              </TabButton>
-              <TabButton active={tab === "Answers"} onClick={() => setTab("Answers")}>
-                Answers
-              </TabButton>
-              <TabButton active={tab === "Score"} onClick={() => setTab("Score")}>
-                Resume score
-              </TabButton>
-              <TabButton active={tab === "Tracker"} onClick={() => setTab("Tracker")}>
-                Tracker
-              </TabButton>
-            </div>
-          </Card>
-
-          {tab === "Autofill" ? (
-            <AutofillAgentPanel
-              profile={state.profile}
-              site={host}
-              onApprove={(fields) => actions.runAutofill({ site: host, fields })}
-            />
-          ) : null}
-
-          {tab === "Answers" ? <GeneratedAnswer /> : null}
-
-          {tab === "Score" ? (
-            <Card style={{ boxShadow: "none" }}>
-              <h3 style={{ margin: 0, fontSize: 14 }}>Resume-to-JD score (quick)</h3>
-              <p style={{ margin: "6px 0 0", color: "var(--muted)", lineHeight: 1.5 }}>
-                Paste a resume snippet and run the scoring agent. See full view in Resume Score page.
-              </p>
-              <Divider />
-              <Field label="Resume text">
-                <Textarea rows={7} value={resumeText} onChange={(e) => setResumeText(e.target.value)} />
-              </Field>
-              <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 12 }}>
-                <Button disabled={!jobLooksValid} onClick={() => actions.runResumeScore(resumeText)}>
-                  Score vs JD
-                </Button>
-                <Button variant="secondary" onClick={() => setResumeText((t) => t + "\n- Added another impact bullet.")}>
-                  Add bullet (demo)
-                </Button>
-              </div>
-              <p style={{ margin: "10px 0 0", color: "var(--faint)", lineHeight: 1.5, fontSize: 12 }}>
-                UX pattern: the agent runs in the sidebar and produces a reviewable output; users decide what to apply.
-              </p>
-            </Card>
-          ) : null}
-
-          {tab === "Tracker" ? (
-            <Card style={{ boxShadow: "none" }}>
-              <h3 style={{ margin: 0, fontSize: 14 }}>Application tracker</h3>
-              <p style={{ margin: "6px 0 0", color: "var(--muted)", lineHeight: 1.5 }}>
-                Track your pipeline in Dashboard. This tab is a shortcut.
-              </p>
-              <Divider />
-              <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                <Button
-                  onClick={() =>
-                    actions.addApplication({
-                      company: company.trim() || "ExampleCo",
-                      role: jobTitle.trim() || "Frontend Engineer",
-                      url: jobUrl.trim() || undefined,
-                      status: "Not Submitted",
-                      notes: "Added from copilot"
-                    })
-                  }
-                >
-                  Add to tracker
-                </Button>
-                <Button
-                  variant="secondary"
-                  onClick={() => actions.notify("Open Dashboard from the top nav to edit statuses.")}
-                >
-                  Open dashboard
-                </Button>
-              </div>
-            </Card>
-          ) : null}
+      <div style={{ padding: 12, borderBottom: "1px solid var(--border-1)" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 6 }}>
+          {(["Autofill", "Answers", "Score", "Tracker"] as const).map((item) => (
+            <button
+              key={item}
+              onClick={() => setTab(item)}
+              style={{
+                padding: "8px 6px",
+                borderRadius: 12,
+                border: `1px solid ${
+                  tab === item ? "rgba(109,94,252,0.45)" : "var(--border-1)"
+                }`,
+                background: tab === item ? "rgba(109,94,252,0.12)" : "transparent",
+                color: "var(--text)",
+                cursor: "pointer",
+                fontSize: 12
+              }}
+            >
+              {item}
+            </button>
+          ))}
         </div>
       </div>
 
-    </div>
-  );
+      <div
+        style={{
+          padding: 14,
+          overflowY: "auto",
+          flex: 1,
+          display: "grid",
+          gap: 12,
+          alignContent: "start"
+        }}
+      >
+        <Card style={{ boxShadow: "none", background: "var(--surface-2)" }}>
+          <h3 style={{ margin: 0, fontSize: 13 }}>Suggested next step</h3>
+          <p style={{ margin: "6px 0 0", fontSize: 13, color: "var(--muted)", lineHeight: 1.5 }}>
+            {jobLooksValid
+              ? "Run autofill or generate tailored answers for this job."
+              : "Add the job title, company, and job description first."}
+          </p>
+        </Card>
+
+        {tab === "Autofill" ? (
+          <AutofillAgentPanel
+            profile={state.profile}
+            site={host}
+            onApprove={(fields) => actions.runAutofill({ site: host, fields })}
+          />
+        ) : null}
+
+        {tab === "Answers" ? <GeneratedAnswer /> : null}
+
+        {tab === "Score" ? (
+          <Card style={{ boxShadow: "none" }}>
+            <h3 style={{ margin: 0, fontSize: 14 }}>Resume match</h3>
+            <Divider />
+            <Field label="Resume text">
+              <Textarea
+                rows={7}
+                value={resumeText}
+                onChange={(e) => setResumeText(e.target.value)}
+              />
+            </Field>
+            <Button disabled={!jobLooksValid} onClick={() => actions.runResumeScore(resumeText)}>
+              Score vs JD
+            </Button>
+          </Card>
+        ) : null}
+
+        {tab === "Tracker" ? (
+          <Card style={{ boxShadow: "none" }}>
+            <h3 style={{ margin: 0, fontSize: 14 }}>Application tracker</h3>
+            <p style={{ color: "var(--muted)", fontSize: 13 }}>
+              Save this role to your pipeline.
+            </p>
+            <Button
+              onClick={() =>
+                actions.addApplication({
+                  company: company.trim() || "ExampleCo",
+                  role: jobTitle.trim() || "Frontend Engineer",
+                  url: jobUrl.trim() || undefined,
+                  status: "Not Submitted",
+                  notes: "Added from copilot"
+                })
+              }
+            >
+              Add to tracker
+            </Button>
+          </Card>
+        ) : null}
+      </div>
+    </Card>
+  </aside>
+</div>
+);
 }
