@@ -38,8 +38,7 @@ export function ProfileForm() {
         <div>
           <h1 style={{ margin: 0, fontSize: 22, letterSpacing: -0.2 }}>Profile</h1>
           <p style={{ margin: "8px 0 0", color: "var(--muted)", lineHeight: 1.5 }}>
-            This is the canonical place where your data lives. Agents read from here and always ask
-            you to approve before “acting”.
+          Manage the profile details used to personalize job matches, resume scoring, and tailored application answers.    
           </p>
         </div>
         <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
@@ -212,7 +211,7 @@ export function ProfileForm() {
         <Divider />
 
         <div style={{ display: "grid", gap: 10 }}>
-          <h2 style={{ margin: 0, fontSize: 16 }}>Work history (simplified)</h2>
+          <h2 style={{ margin: 0, fontSize: 16 }}>Work history</h2>
           {state.profile.workHistory.map((item, idx) => (
             <Card key={idx} style={{ background: "var(--surface-2)", boxShadow: "none" }}>
               <div style={{ display: "grid", gap: 12, gridTemplateColumns: "1fr 1fr 1fr" }}>

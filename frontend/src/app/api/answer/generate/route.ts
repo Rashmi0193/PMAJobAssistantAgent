@@ -1,32 +1,78 @@
 import { NextResponse } from "next/server";
+import { GoogleGenAI } from "@google/genai";
 
 export async function POST(req: Request) {
-  const body = (await req.json().catch(() => ({}))) as {
-    profile?: { name?: string; tone?: string };
-    job?: { title?: string; company?: string };
-    question?: string;
-  };
+  if (!process.env.GEMINI_API_KEY) {
+    return NextResponse.json(
+      { error: "Missing GEMINI_API_KEY. Check frontend/.env.local and restart npm run dev." },
+      { status: 500 }
+    );
+  }
 
-  const name = body.profile?.name?.trim() || "I";
-  const role = body.job?.title || "the role";
-  const company = body.job?.company || "the company";
-  const tone = body.profile?.tone || "Warm";
+  try {
+    const body = (await req.json().catch(() => ({}))) as {
+      profile?: { name?: string; tone?: string; skills?: string[] };
+      job?: { title?: string; company?: string; description?: string };
+      question?: string;
+    };
 
-  const opener =
-    tone === "Direct"
-      ? `I'm excited about the ${role} role at ${company} because it matches how I build product-focused, reliable UIs.`
-      : tone === "Confident"
-        ? `The ${role} role at ${company} is a strong fit for me because I consistently ship high-quality UI with measurable impact.`
-        : `I’m excited about the ${role} role at ${company} because it’s a great match for how I like to build thoughtful, user-centered interfaces.`;
+    const ai = new GoogleGenAI({
+      apiKey: process.env.GEMINI_API_KEY
+    });
 
-  const bodyText = `In my recent work, I’ve built React/TypeScript features end-to-end—partnering with design, refining UX details, and keeping performance and accessibility in mind. I’d bring that same approach to ${company}: ship incrementally, measure outcomes, and keep the experience polished for users.`;
+    const role = body.job?.title || "the role";
+    const company = body.job?.company || "the company";
+    const tone = body.profile?.tone || "Warm";
+    const question = body.question || "Why this role?";
+    const skills = body.profile?.skills?.join(", ") || "React, TypeScript, frontend development";
+    const jobDescription = body.job?.description || "";
 
-  const closer = `${name === "I" ? "I’m" : `${name} is`} especially interested in collaborating cross-functionally and turning product requirements into clean, maintainable UI.`;
+    const prompt = `
+    You are a professional job application assistant.
+    
+    IMPORTANT RULES:
+    - The role is "${role}". You MUST refer to it exactly as "${role}".
+    - DO NOT change the role.
+    - DO NOT say Frontend Engineer unless the role explicitly says so.
+    - If you mention the role, it must be "${role}".
+    
+    Write an answer for:
+    
+    Question: ${question}
+    Company: ${company}
+    
+    Candidate background:
+    ${skills}
+    
+    Job description:
+    ${jobDescription}
+    
+    Instructions:
+    - Write in first person.
+    - Keep it under 120 words.
+    - Align skills with the role "${role}".
+    - Focus on relevant skills from the job description.
+    - Avoid bias toward frontend unless explicitly required.
+    `;
 
-  return NextResponse.json({
-    question: body.question ?? "Why this role?",
-    text: `${opener}\n\n${bodyText}\n\n${closer}`,
-    status: "Draft"
-  });
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: prompt
+    });
+
+    return NextResponse.json({
+      question,
+      text: response.text || "No response generated.",
+      status: "Generated"
+    });
+  } catch (error: any) {
+    console.error("Gemini answer generation failed:", error);
+
+    return NextResponse.json(
+      {
+        error: error?.message || "Failed to generate answer."
+      },
+      { status: 500 }
+    );
+  }
 }
-

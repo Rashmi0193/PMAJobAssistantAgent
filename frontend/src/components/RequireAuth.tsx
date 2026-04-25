@@ -22,7 +22,7 @@ export function RequireAuth({ children }: { children: React.ReactNode }) {
       <Card style={{ boxShadow: "none", padding: 18 }}>
         <h1 style={{ margin: 0, fontSize: 20, letterSpacing: -0.2 }}>Log in required</h1>
         <p style={{ margin: "10px 0 0", color: "var(--muted)", lineHeight: 1.6 }}>
-          This page is part of the “after login” experience. Use the demo auth flow to continue.
+           Please log in or create an account to continue.
         </p>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 12 }}>
           <Link href="/login">
@@ -38,4 +38,3 @@ export function RequireAuth({ children }: { children: React.ReactNode }) {
 
   return <>{children}</>;
 }
-

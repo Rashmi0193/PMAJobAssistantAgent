@@ -15,8 +15,7 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
       href={href}
       className={[
         "rounded-xl px-3 py-2 text-[14px] font-semibold transition-colors",
-        active ? "bg-[color:var(--surface-2)]" : "hover:bg-[color:var(--surface-2)]",
-        "text-[color:var(--muted)] hover:text-[color:var(--text)]",
+        active ? "bg-[color:var(--surface-2)] text-[color:var(--text)]" : "text-[color:var(--muted)] hover:text-[color:var(--text)] hover:bg-[color:var(--surface-2)]",
       ].join(" ")}
     >
       {children}
@@ -25,55 +24,40 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
 }
 
 export function TopNav() {
-  const [theme, setTheme] = useState<"light" | "dark">("light");
   const { state: auth, actions: authActions } = useAuth();
+  const [theme, setTheme] = useState<"light" | "dark">("light");
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    try {
-      const saved = window.localStorage.getItem("theme");
-      const initial = saved === "dark" ? "dark" : "light";
-      setTheme(initial);
+    const saved = window.localStorage.getItem("theme");
+    const initial = saved === "dark" ? "dark" : "light";
+    setTheme(initial);
 
-      if (initial === "dark") {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
-    } catch {
-      // ignore
-    }
+    document.documentElement.classList.toggle("dark", initial === "dark");
   }, []);
 
   useEffect(() => {
-    function handleClickOutside() {
-      setOpen(false);
+    function handleClickOutside(e: MouseEvent) {
+      if (!(e.target as HTMLElement).closest("#profile-menu")) {
+        setOpen(false);
+      }
     }
-  
+
     if (open) {
       document.addEventListener("click", handleClickOutside);
     }
-  
+
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
   }, [open]);
 
   const toggleTheme = () => {
-    const nextTheme = theme === "dark" ? "light" : "dark";
-    setTheme(nextTheme);
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
 
-    try {
-      window.localStorage.setItem("theme", nextTheme);
-
-      if (nextTheme === "dark") {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
-    } catch {
-      // ignore
-    }
+    window.localStorage.setItem("theme", next);
+    document.documentElement.classList.toggle("dark", next === "dark");
   };
 
   return (
@@ -97,118 +81,120 @@ export function TopNav() {
           alignItems: "center",
         }}
       >
+        {/* Logo */}
         <Link href="/" className="flex items-center gap-3">
           <div
-            aria-hidden
-            className="h-8 w-8 rounded-xl shadow-[0_12px_30px_rgba(109,94,252,0.22)]"
+            className="h-8 w-8 rounded-xl"
             style={{
               background: "linear-gradient(135deg, var(--brand), var(--brand-2))",
             }}
           />
           <span className="font-extrabold tracking-[-0.3px] text-[color:var(--text)]">
-            Job Assistant Agent
+            Job Assistant
           </span>
         </Link>
 
+        {/* Nav */}
         <nav
           style={{
             display: "flex",
             gap: 14,
             alignItems: "center",
             flexWrap: "wrap",
-            justifyContent: "flex-end",
           }}
         >
+          <NavLink href="/latest-jobs">Jobs</NavLink>
           <NavLink href="/copilot">Copilot</NavLink>
           {!auth.user && <NavLink href="/employers">For Employers</NavLink>}
-          <NavLink href="/latest-jobs">Jobs</NavLink>
 
-          {auth.user ? (
+          {auth.user && (
             <>
-              <span aria-hidden style={{ width: 1, height: 18, background: "var(--border-2)" }} />
-              <NavLink href="/jobs-for-you">Jobs for you</NavLink>
-              <NavLink href="/job-tracker">Job Tracker</NavLink>
-              <NavLink href="/resume-parser">Resume Parser</NavLink>
+              <span style={{ width: 1, height: 18, background: "var(--border-2)" }} />
+
             </>
-          ) : null}
+          )}
 
-          <span aria-hidden style={{ width: 1, height: 18, background: "var(--border-2)" }} />
+          <span style={{ width: 1, height: 18, background: "var(--border-2)" }} />
+
+          {/* Auth */}
           {auth.user ? (
-  <div style={{ position: "relative" }}
-  onClick={(e) => e.stopPropagation()}
->
-    <Button
-      variant="ghost"
-      onClick={() => setOpen((prev) => !prev)}
-      className="px-3 py-2 text-[13px]"
-    >
-      Profile ▾
-    </Button>
+            <div id="profile-menu" style={{ position: "relative" }}>
+              <Button
+                variant="ghost"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setOpen((prev) => !prev);
+                }}
+              >
+                Profile ▾
+              </Button>
 
-    {open && (
-      <div
-        style={{
-          position: "absolute",
-          right: 0,
-          top: "110%",
-          background: "var(--surface-1)",
-          border: "1px solid var(--border-1)",
-          borderRadius: 12,
-          padding: 8,
-          minWidth: 160,
-          boxShadow: "var(--shadow-soft)",
-          zIndex: 50,
-        }}
-      >
-        <Link href="/dashboard">
-          <div
-            className="px-3 py-2 rounded-lg hover:bg-[color:var(--surface-2)] cursor-pointer text-[14px]"
-            onClick={() => setOpen(false)}
-          >
-            Dashboard
-          </div>
-        </Link>
+              {open && (
+                <div
+                  style={{
+                    position: "absolute",
+                    right: 0,
+                    top: "110%",
+                    background: "var(--surface-1)",
+                    border: "1px solid var(--border-1)",
+                    borderRadius: 12,
+                    padding: 8,
+                    minWidth: 160,
+                    boxShadow: "var(--shadow-soft)",
+                    zIndex: 50,
+                  }}
+                >
+                  <Link href="/dashboard">
+                    <div className="px-3 py-2 rounded-lg hover:bg-[color:var(--surface-2)] cursor-pointer">
+                      Dashboard
+                    </div>
+                  </Link>
 
-        <Link href="/profile-setup">
-          <div
-            className="px-3 py-2 rounded-lg hover:bg-[color:var(--surface-2)] cursor-pointer text-[14px]"
-            onClick={() => setOpen(false)}
-          >
-            Profile
-          </div>
-        </Link>
+                  <Link href="/profile-setup">
+                    <div className="px-3 py-2 rounded-lg hover:bg-[color:var(--surface-2)] cursor-pointer">
+                      Profile
+                    </div>
+                  </Link>
 
-        <div
-          className="px-3 py-2 rounded-lg hover:bg-[color:var(--surface-2)] cursor-pointer text-[14px]"
-          onClick={() => {
-            setOpen(false);
-            authActions.logout();
-          }}
-        >
-          Log out
-        </div>
-      </div>
-    )}
-  </div>
-) : (
-              <>
+                  <Link href="/job-tracker">
+                    <div className="px-3 py-2 rounded-lg hover:bg-[color:var(--surface-2)] cursor-pointer">
+                      Job Tracker
+                    </div>
+                  </Link>
+
+                  <Link href="/jobs-for-you">
+                  <div className="px-3 py-2 rounded-lg hover:bg-[color:var(--surface-2)] cursor-pointer">
+                    Jobs For You 
+                    </div>
+                  </Link>
+
+
+                  <div
+                    className="px-3 py-2 rounded-lg hover:bg-[color:var(--surface-2)] cursor-pointer"
+                    onClick={() => {
+                      setOpen(false);
+                      authActions.logout();
+                    }}
+                  >
+                    Log out
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <>
               <Link href="/login">
-                <Button variant="ghost" className="px-3 py-2 text-[13px]">
-                  Log in
-                </Button>
+                <Button variant="ghost">Log in</Button>
               </Link>
               <Link href="/signup">
-                <Button className="px-3 py-2 text-[13px]">Sign up</Button>
+                <Button>Sign up</Button>
               </Link>
             </>
           )}
 
-          <Button
-            variant="ghost"
-            onClick={toggleTheme}
-            className="px-3 py-2 text-[13px]"
-          >
-            {theme === "dark" ? "🔆" : "🔅"}
+          {/* Theme toggle */}
+          <Button variant="ghost" onClick={toggleTheme}>
+            {theme === "dark" ? "🌙" : "☀️"}
           </Button>
         </nav>
       </div>

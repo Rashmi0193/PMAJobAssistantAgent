@@ -1,12 +1,11 @@
 "use client";
 
-import { AssistantShell } from "@/components/AssistantShell";
+import { CopilotDemo } from "@/components/CopilotDemo";
 
-export default function AssistantPage() {
+export default function CopilotPage() {
   return (
     <main className="container">
-      <AssistantShell />
+      <CopilotDemo />
     </main>
   );
 }
-

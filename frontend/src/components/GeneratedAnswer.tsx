@@ -10,54 +10,81 @@ import { Textarea } from "@/components/ui/Input";
 import { Divider } from "@/components/ui/Divider";
 
 const COMMON_QUESTIONS = [
-  "Why this role?",
-  "Why this company?",
+  "Why are you interested in this role?",
+  "Why do you want to work at this company?",
+  "Tell us about a project you are proud of.",
   "Describe a challenging bug you fixed.",
-  "Tell me about a project you’re proud of.",
-  "What’s your experience with accessibility?"
+  "How does your experience match this role?",
+  "What are your strengths for this position?",
+  "Describe your experience working in a team.",
+  "What is your experience with accessibility?"
 ];
 
 export function GeneratedAnswer() {
   const { state, actions } = useAppState();
+
   const [question, setQuestion] = useState(COMMON_QUESTIONS[0]);
   const [draft, setDraft] = useState("");
   const [feedbackNote, setFeedbackNote] = useState("");
 
   useEffect(() => {
-    if (state.generatedAnswer?.text) setDraft(state.generatedAnswer.text);
+    if (state.generatedAnswer?.text) {
+      setDraft(state.generatedAnswer.text);
+    }
   }, [state.generatedAnswer?.text]);
 
   const status = state.generatedAnswer?.status ?? "Draft";
-  const statusTone = status === "Approved" ? "ok" : status === "Rejected" ? "danger" : "neutral";
+  const statusTone =
+    status === "Approved" ? "ok" : status === "Rejected" ? "danger" : "neutral";
 
   const canCopy = useMemo(() => draft.trim().length > 0, [draft]);
-
+  const hasAnswer = Boolean(state.generatedAnswer);
+  const isGenerating = false;
   async function copy() {
     if (!canCopy) return;
+
     try {
       await navigator.clipboard.writeText(draft);
-      actions.notify("Copied to clipboard.");
+      actions.notify("Answer copied to clipboard.");
     } catch {
-      actions.notify("Clipboard failed (browser permission).");
+      actions.notify("Unable to copy. Please copy manually.");
     }
   }
 
   return (
     <Card>
-      <div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          gap: 12,
+          flexWrap: "wrap",
+          alignItems: "flex-start"
+        }}
+      >
         <div>
-          <h2 style={{ margin: 0, fontSize: 18 }}>Generated answer</h2>
-          <p style={{ margin: "6px 0 0", color: "var(--muted)", lineHeight: 1.5 }}>
-            The agent drafts; you review, edit, and approve. Feedback improves quality over time.
+          <h2 style={{ margin: 0, fontSize: 18 }}>Tailored Application Answer</h2>
+
+          <p
+            style={{
+              margin: "6px 0 0",
+              color: "var(--muted)",
+              lineHeight: 1.5,
+              maxWidth: 520
+            }}
+          >
+            Generate a role-specific draft, review it, edit the wording, and copy
+            the final answer into your job application.
           </p>
         </div>
-        <Badge tone={statusTone as any}>Status: {status}</Badge>
+
+        <Badge tone={statusTone as any}>{status}</Badge>
       </div>
 
       <Divider />
 
-      <div style={{ display: "grid", gap: 12 }}>
-        <Field label="Question">
+      <div style={{ display: "grid", gap: 14 }}>
+        <Field label="Application question">
           <select
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
@@ -66,7 +93,9 @@ export function GeneratedAnswer() {
               padding: "10px 12px",
               borderRadius: 12,
               background: "var(--surface-2)",
-              border: "1px solid var(--border-1)"
+              border: "1px solid var(--border-1)",
+              color: "var(--text)",
+              outline: "none"
             }}
           >
             {COMMON_QUESTIONS.map((q) => (
@@ -78,45 +107,100 @@ export function GeneratedAnswer() {
         </Field>
 
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-          <Button onClick={() => actions.runTailoredAnswer(question)}>Generate</Button>
-          <Button variant="secondary" disabled={!canCopy} onClick={copy}>
-            Copy
+          <Button
+            disabled={isGenerating}
+            onClick={() => actions.runTailoredAnswer(question)}
+          >
+            {isGenerating ? "Generating..." : "Generate answer"}
           </Button>
-          <Button variant="ghost" onClick={() => actions.approveAnswer()} disabled={!state.generatedAnswer}>
+
+          <Button variant="secondary" disabled={!canCopy} onClick={copy}>
+            Copy answer
+          </Button>
+
+          <Button
+            variant="ghost"
+            disabled={!hasAnswer}
+            onClick={() => actions.approveAnswer()}
+          >
             Approve
           </Button>
-          <Button variant="danger" onClick={() => actions.rejectAnswer()} disabled={!state.generatedAnswer}>
+
+          <Button
+            variant="danger"
+            disabled={!hasAnswer}
+            onClick={() => actions.rejectAnswer()}
+          >
             Reject
-          </Button>
-          <div style={{ flex: 1 }} />
-          <Button
-            variant="ghost"
-            disabled={!state.generatedAnswer}
-            onClick={() => actions.submitFeedback({ kind: "GeneratedAnswer", rating: "up", note: feedbackNote || undefined })}
-          >
-            👍
-          </Button>
-          <Button
-            variant="ghost"
-            disabled={!state.generatedAnswer}
-            onClick={() => actions.submitFeedback({ kind: "GeneratedAnswer", rating: "down", note: feedbackNote || undefined })}
-          >
-            👎
           </Button>
         </div>
 
-        <Field label="Draft (editable)">
+        <Field
+          label="Editable answer draft"
+          hint="Always review before submitting. Make sure the answer matches your real experience."
+        >
           <Textarea
-            rows={9}
+            rows={10}
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
-            placeholder="Generate an answer to edit it here…"
+            placeholder="Your generated answer will appear here..."
           />
         </Field>
 
-        <Field label="Feedback note (optional)" hint="What was good/bad? Tone? Accuracy? Missing details?">
-          <Textarea rows={2} value={feedbackNote} onChange={(e) => setFeedbackNote(e.target.value)} />
-        </Field>
+        <Card style={{ boxShadow: "none", background: "var(--surface-2)" }}>
+          <h3 style={{ margin: 0, fontSize: 14 }}>Quality feedback</h3>
+
+          <p
+            style={{
+              margin: "6px 0 12px",
+              color: "var(--muted)",
+              fontSize: 13,
+              lineHeight: 1.5
+            }}
+          >
+            Use feedback to mark whether the generated answer was useful,
+            accurate, and relevant to the job.
+          </p>
+
+          <Field label="Feedback note" hint="Example: too generic, missing project details, tone is good, needs more keywords.">
+            <Textarea
+              rows={3}
+              value={feedbackNote}
+              onChange={(e) => setFeedbackNote(e.target.value)}
+              placeholder="Optional feedback..."
+            />
+          </Field>
+
+          <div style={{ display: "flex", gap: 10, marginTop: 12 }}>
+            <Button
+              variant="ghost"
+              disabled={!hasAnswer}
+              onClick={() =>
+                actions.submitFeedback({
+                  kind: "GeneratedAnswer",
+                  rating: "up",
+                  note: feedbackNote || undefined
+                })
+              }
+            >
+              Helpful 👍
+            </Button>
+
+            <Button
+              variant="ghost"
+              disabled={!hasAnswer}
+              onClick={() =>
+                actions.submitFeedback({
+                  kind: "GeneratedAnswer",
+                  rating: "down",
+                  note: feedbackNote || undefined
+                })
+              }
+            >
+              Not helpful 👎
+            </Button>
+          </div>
+        </Card>
       </div>
     </Card>
   );

@@ -65,7 +65,7 @@ export function ApplicationDashboard() {
         <div style={{ display: "grid", gap: 12, gridTemplateColumns: "1fr", alignItems: "start" }}>
           <div style={{ display: "grid", gap: 12, gridTemplateColumns: "1fr 1fr" }}>
             <Field label="Company (required)">
-              <Input value={company} onChange={(e) => setCompany(e.target.value)} placeholder="Acme" />
+              <Input value={company} onChange={(e) => setCompany(e.target.value)} placeholder="" />
             </Field>
             <Field label="Role (required)">
               <Input value={role} onChange={(e) => setRole(e.target.value)} placeholder="Frontend Engineer" />

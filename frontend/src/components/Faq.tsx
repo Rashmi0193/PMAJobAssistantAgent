@@ -15,13 +15,17 @@ export function Faq({ items }: { items: FaqItem[] }) {
   return (
     <Card style={{ boxShadow: "none" }}>
       <h2 style={{ margin: 0, fontSize: 18, letterSpacing: -0.2 }}>FAQ</h2>
+
       <p style={{ margin: "8px 0 0", color: "var(--muted)", lineHeight: 1.6 }}>
-        Common questions about how the copilot works.
+        Common questions about how Copilot helps with applications.
       </p>
+
       <Divider />
+
       <div style={{ display: "grid", gap: 10 }}>
         {items.map((it, idx) => {
           const isOpen = open === idx;
+
           return (
             <div
               key={it.q}
@@ -29,10 +33,11 @@ export function Faq({ items }: { items: FaqItem[] }) {
                 borderRadius: 14,
                 border: "1px solid var(--border-1)",
                 background: "var(--surface-2)",
-                padding: 12
+                padding: 12,
               }}
             >
               <button
+                type="button"
                 onClick={() => setOpen(isOpen ? null : idx)}
                 style={{
                   width: "100%",
@@ -45,14 +50,22 @@ export function Faq({ items }: { items: FaqItem[] }) {
                   padding: 0,
                   cursor: "pointer",
                   color: "var(--text)",
-                  fontWeight: 650
+                  fontWeight: 650,
                 }}
               >
                 <span>{it.q}</span>
                 <span style={{ color: "var(--muted)" }}>{isOpen ? "−" : "+"}</span>
               </button>
+
               {isOpen ? (
-                <p style={{ margin: "10px 0 0", color: "var(--muted)", lineHeight: 1.65, whiteSpace: "pre-wrap" }}>
+                <p
+                  style={{
+                    margin: "10px 0 0",
+                    color: "var(--muted)",
+                    lineHeight: 1.65,
+                    whiteSpace: "pre-wrap",
+                  }}
+                >
                   {it.a}
                 </p>
               ) : null}
@@ -63,4 +76,3 @@ export function Faq({ items }: { items: FaqItem[] }) {
     </Card>
   );
 }
-

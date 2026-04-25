@@ -15,17 +15,16 @@ export function TaskQueue({ tasks }: { tasks: AgentTask[] }) {
   if (!tasks.length) {
     return (
       <Card style={{ boxShadow: "none" }}>
-        <h3 style={{ margin: 0, fontSize: 14 }}>Task queue</h3>
+        <h3 style={{ margin: 0, fontSize: 14 }}>Activity</h3>
         <p style={{ margin: "8px 0 0", color: "var(--muted)", lineHeight: 1.5 }}>
-          No tasks yet. Run an agent action to see progress, previews, and review states.
-        </p>
+        No activity yet. Run an assistant action to see progress, previews, and review status.        </p>
       </Card>
     );
   }
 
   return (
     <Card style={{ boxShadow: "none" }}>
-      <h3 style={{ margin: 0, fontSize: 14 }}>Task queue</h3>
+      <h3 style={{ margin: 0, fontSize: 14 }}>Activity</h3>
       <div style={{ display: "grid", gap: 10, marginTop: 10 }}>
         {tasks.slice(0, 5).map((t) => (
           <div

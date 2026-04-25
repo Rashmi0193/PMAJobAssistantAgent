@@ -45,8 +45,7 @@ export function ResumeAnalyzer() {
         <div>
           <h1 style={{ margin: 0, fontSize: 22, letterSpacing: -0.2 }}>Resume analyzer</h1>
           <p style={{ margin: "8px 0 0", color: "var(--muted)", lineHeight: 1.5 }}>
-            Mock scoring UI: shows match score, strengths, gaps, and actionable tips.
-          </p>
+          Review your resume against a target role and get a match score, strengths, gaps, and improvement tips.          </p>
         </div>
         {analysis ? (
           <Badge tone={scoreTone(analysis.score) as any}>
@@ -61,14 +60,14 @@ export function ResumeAnalyzer() {
 
       <Field
         label="Paste your resume text"
-        hint="For this assignment, we use dummy/mock analysis — no backend needed."
+        hint="Paste resume content to analyze skills, keywords, and role alignment."
       >
         <Textarea rows={10} value={resumeText} onChange={(e) => setResumeText(e.target.value)} />
       </Field>
 
       <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 12 }}>
         <Button disabled={!canAnalyze} onClick={() => actions.runResumeScore(resumeText)}>
-          Analyze
+          Analyze resume
         </Button>
         <Button variant="secondary" onClick={() => setResumeText(SAMPLE_RESUME)}>
           Use sample

@@ -212,8 +212,7 @@ export function JobsForYou() {
           <div className="flex flex-col gap-1">
             <h1 className="m-0 text-[22px] tracking-[-0.2px]">Jobs for you</h1>
             <p className="m-0 text-[14px] leading-6 text-[color:var(--muted)]">
-              Frontend-only demo feed filtered by your preferences. Your backend teammate can replace this with real crawled jobs.
-            </p>
+            Personalized job recommendations based on your role, location, salary, and work preferences.            </p>
           </div>
           <Badge>{ranked.length} matches</Badge>
         </div>

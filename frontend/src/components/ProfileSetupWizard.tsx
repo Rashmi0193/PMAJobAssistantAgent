@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { DEFAULT_PROFILE, useAppState } from "@/context/AppStateContext";
 import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
 import { Divider } from "@/components/ui/Divider";
 import { Field } from "@/components/ui/Field";
 import { Input, Textarea } from "@/components/ui/Input";
@@ -13,8 +12,7 @@ import { Button } from "@/components/ui/Button";
 
 type Step = 1 | 2 | 3 | 4;
 
-const STEP_PERCENT: Record<Step, number> = { 1: 60, 2: 70, 3: 80, 4: 90 };
-
+const STEP_PERCENT: Record<Step, number> = { 1: 25, 2: 50, 3: 75, 4: 100 };
 const EXPERIENCE_LEVEL_PRESETS = [
   "Entry Level & New Grad",
   "Junior (1 to 2 years)",
@@ -313,8 +311,7 @@ export function ProfileSetupWizard() {
       <div className="flex flex-col gap-2 text-center">
         <h1 className="m-0 text-[28px] tracking-[-0.5px]">Set your preferences</h1>
         <p className="m-0 text-[14px] leading-6 text-[color:var(--muted)]">
-          This helps the copilot recommend jobs and tailor your application materials.
-        </p>
+        This helps personalize job recommendations, resume scoring, and application answers.        </p>
       </div>
 
       <Divider />
@@ -326,7 +323,7 @@ export function ProfileSetupWizard() {
       <Input
         value={targetRole}
         onChange={(e) => setTargetRole(e.target.value)}
-        placeholder="Frontend Engineer"
+        placeholder="Software Engineer"
       />
     </Field>
 

@@ -125,7 +125,7 @@ type Action =
 export const DEFAULT_PROFILE: Profile = {
   name: "",
   email: "",
-  targetRole: "Frontend Engineer",
+  targetRole: "Software Engineer",
   yearsExperience: 3,
   seniority: "Mid",
   tone: "Warm",
@@ -143,17 +143,17 @@ export const DEFAULT_PROFILE: Profile = {
   links: {},
   workHistory: [
     {
-      company: "ExampleCo",
-      title: "Frontend Engineer",
-      dates: "2023 - Present",
-      highlights: "Built and shipped UI features; improved performance; collaborated with design."
+      company: "",
+      title: " ",
+      dates: " ",
+      highlights: ""
     }
   ]
 };
 
 const DEFAULT_JOB: AppState["job"] = {
   title: "Frontend Engineer",
-  company: "Acme",
+  company: "",
   description:
     "We’re looking for a Frontend Engineer with React/Next.js, accessibility best practices, and strong collaboration skills."
 };
@@ -290,10 +290,10 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
         try {
           const job = await api.scrapeJobPosting({ url });
           dispatch({ type: "job/set", job });
-          dispatch({ type: "toast/set", message: "Job details loaded from URL (mock)." });
+          dispatch({ type: "toast/set", message: "Job details loaded from URL." });
           window.setTimeout(() => dispatch({ type: "toast/set", message: undefined }), 1200);
         } catch {
-          dispatch({ type: "toast/set", message: "Failed to scrape job posting (mock)." });
+          dispatch({ type: "toast/set", message: "Unable to load job details" });
         }
       },
       saveProfile: async () => {
@@ -434,7 +434,7 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
               updatedAt: nowIso()
             }
           });
-          dispatch({ type: "toast/set", message: "Autofill ready for approval (simulated)." });
+          dispatch({ type: "toast/set", message: "Autofill preview is ready for review" });
           window.setTimeout(() => dispatch({ type: "toast/set", message: undefined }), 1400);
         } catch {
           dispatch({

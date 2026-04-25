@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Profile } from "@/context/AppStateContext";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -11,6 +11,7 @@ type FieldItem = { key: string; label: string; value: string };
 
 function buildSuggestedFields(profile: Profile): FieldItem[] {
   const firstJob = profile.workHistory[0];
+
   return [
     { key: "full_name", label: "Full name", value: profile.name || "—" },
     { key: "email", label: "Email", value: profile.email || "—" },
@@ -33,22 +34,30 @@ export function AutofillAgentPanel({
   onApprove: (fields: FieldItem[]) => void;
 }) {
   const suggested = useMemo(() => buildSuggestedFields(profile), [profile]);
-  const [selected, setSelected] = useState<Record<string, boolean>>(() =>
-    Object.fromEntries(suggested.map((f) => [f.key, f.value !== "—"]))
-  );
+
+  const [selected, setSelected] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    setSelected(Object.fromEntries(suggested.map((f) => [f.key, f.value !== "—"])));
+  }, [suggested]);
 
   const selectedFields = useMemo(
     () => suggested.filter((f) => selected[f.key] && f.value !== "—"),
     [suggested, selected]
   );
 
+  const clearSelection = () => {
+    setSelected(Object.fromEntries(suggested.map((f) => [f.key, false])));
+  };
+
   return (
     <Card style={{ boxShadow: "none" }}>
       <div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
         <div>
-          <h3 style={{ margin: 0, fontSize: 14 }}>Autofill agent (preview)</h3>
+          <h3 style={{ margin: 0, fontSize: 14 }}>Autofill Assistant</h3>
           <p style={{ margin: "6px 0 0", color: "var(--muted)", lineHeight: 1.5 }}>
-            The agent proposes which fields to fill on <span style={{ color: "var(--text)" }}>{site}</span>. You control what gets applied.
+            Suggested fields for{" "}
+            <span style={{ color: "var(--text)" }}>{site || "this application page"}</span>. You control what gets applied.
           </p>
         </div>
         <Badge>Needs approval</Badge>
@@ -77,6 +86,7 @@ export function AutofillAgentPanel({
               disabled={f.value === "—"}
               style={{ marginTop: 3 }}
             />
+
             <div style={{ flex: 1 }}>
               <div style={{ fontWeight: 650 }}>{f.label}</div>
               <div style={{ marginTop: 4, color: "var(--muted)", lineHeight: 1.4, whiteSpace: "pre-wrap" }}>
@@ -88,19 +98,17 @@ export function AutofillAgentPanel({
       </div>
 
       <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 12 }}>
-        <Button
-          disabled={!selectedFields.length}
-          onClick={() => onApprove(selectedFields)}
-        >
-          Approve & simulate fill
+        <Button disabled={!selectedFields.length} onClick={() => onApprove(selectedFields)}>
+          Approve autofill
         </Button>
-        <Button variant="ghost" onClick={() => setSelected(Object.fromEntries(suggested.map((f) => [f.key, false])))}>
+
+        <Button variant="ghost" onClick={clearSelection}>
           Clear
         </Button>
       </div>
 
       <p style={{ margin: "10px 0 0", color: "var(--faint)", lineHeight: 1.5, fontSize: 12 }}>
-        In a real browser extension, a content script would map these keys to the site’s inputs and fill them after approval.
+        Selected fields will be prepared for secure autofill after your approval.
       </p>
     </Card>
   );
